@@ -1,0 +1,2 @@
+EmberFlare.Router.map(function() {
+});
