@@ -9,3 +9,6 @@ gem 'jquery-rails'
 
 gem 'ember-rails'
 gem 'ember-source', '1.0.0'
+
+gem "thin"
+gem "quiet_assets", :group => :development
