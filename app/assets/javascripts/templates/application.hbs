@@ -1,0 +1,10 @@
+{{#link-to "entries"}}Entries{{/link-to}} |
+{{#link-to "new"}}New Entry{{/link-to}}
+
+{{#if isLoggedIn}}
+  <button {{action "logout"}}>Log Out</button>
+{{/if}}
+
+<br><br>
+
+{{outlet}}
