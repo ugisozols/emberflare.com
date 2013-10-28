@@ -1,7 +1,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require handlebars
-//= require jquery.cookie
 //= require ember
 //= require ember-data
 //= require ember-simple-auth
