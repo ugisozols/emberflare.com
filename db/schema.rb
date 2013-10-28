@@ -14,6 +14,8 @@
 ActiveRecord::Schema.define(version: 20130916085036) do
 
   create_table "entries", force: true do |t|
+    t.integer  "user_id"
+    t.string   "author"
     t.string   "title"
     t.text     "content"
     t.datetime "created_at"

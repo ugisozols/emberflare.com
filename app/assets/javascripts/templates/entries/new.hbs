@@ -2,6 +2,10 @@ New ...
 <hr>
 
 <form {{action "createEntry" on="submit" }}>
+  {{#unless session.isAuthenticated}}
+    Name: {{input type="text" placeholder="Author ...." value=model.author}}
+    <br>
+  {{/unless}}
   Title: {{input type="text" placeholder="Title ...." value=model.title}}
   <br>
   Content: {{textarea placeholder="Content" value=model.content}}
