@@ -8,7 +8,12 @@ gem 'uglifier', '>= 1.3.0'
 gem 'jquery-rails'
 
 gem 'ember-rails'
-gem 'ember-source', '1.0.0'
+gem 'ember-source', '1.1.1'
 
 gem "thin"
-gem "quiet_assets", :group => :development
+group :development do
+  gem "quiet_assets"
+  gem "pry-rails"
+end
+
+gem "active_model_serializers", :github => "rails-api/active_model_serializers", :branch => "rewrite"
