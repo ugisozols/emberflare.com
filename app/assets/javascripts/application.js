@@ -17,13 +17,6 @@ EmberFlare.ApplicationAdapter = DS.RESTAdapter.extend({
   namespace: 'api'
 });
 
-Ember.Application.initializer({
-  name: "authentication",
-  initialize: function(container, application) {
-    Ember.SimpleAuth.setup(application);
-  }
-});
-
 // EmberFlare.Router.reopen({
 //   location: "history"
 // });

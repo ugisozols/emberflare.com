@@ -2,10 +2,9 @@
 {{#link-to "entries.new"}}New Entry{{/link-to}} |
 
 {{#if session.isAuthenticated}}
-  {{#link-to 'logout'}}Logout{{/link-to}}
-  <p class="navbar-text pull-right">Your are currently signed in</p>
+  <button {{ action 'logout' }}>Logout</button> - you're looged in!
 {{else}}
-  {{#link-to 'login'}}Login{{/link-to}}
+  <button {{ action 'login' }}>Login</button>
 {{/if}}
 
 <br><br>

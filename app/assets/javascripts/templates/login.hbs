@@ -1,9 +1,7 @@
 <form {{action login on='submit'}}>
   <label for="identification">Login</label>
   {{view Ember.TextField id='identification' valueBinding='identification' placeholder='Enter Login'}}
-  <br>
   <label for="password">Password</label>
   {{view Ember.TextField id='password' type='password' valueBinding='password' placeholder='Enter Password'}}
-  <br>
   <button type="submit">Login</button>
 </form>

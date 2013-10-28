@@ -1,28 +1,36 @@
-// Version: 0.0.2-6-g48729a9
-// Last commit: 48729a9 (2013-10-12 10:40:11 +0200)
+// Version: 0.0.3-103-gd1cdf18
+// Last commit: d1cdf18 (2013-10-27 18:14:08 +0100)
 
 
 (function() {
 Ember.SimpleAuth = {};
-Ember.SimpleAuth.setup = function(app, options) {
+Ember.SimpleAuth.setup = function(container, application, options) {
   options = options || {};
-  this.routeAfterLogin = options.routeAfterLogin || 'index';
+  this.routeAfterLogin  = options.routeAfterLogin || 'index';
   this.routeAfterLogout = options.routeAfterLogout || 'index';
-  this.loginRoute = options.loginRoute || 'login';
-  this.logoutRoute = options.logoutRoute || 'logout';
-  this.serverSessionRoute = options.serverSessionRoute || '/session';
+  this.loginRoute       = options.loginRoute || 'login';
+  this.serverTokenRoute = options.serverTokenRoute || '/token';
+  this.autoRefreshToken = Ember.isEmpty(options.autoRefreshToken) ? true : !!options.autoRefreshToken;
 
   var session = Ember.SimpleAuth.Session.create();
-  app.register('simple_auth:session', session, { instantiate: false, singleton: true });
+  application.register('simple_auth:session', session, { instantiate: false, singleton: true });
   Ember.$.each(['model', 'controller', 'view', 'route'], function(i, component) {
-    app.inject(component, 'session', 'simple_auth:session');
+    application.inject(component, 'session', 'simple_auth:session');
   });
 
   Ember.$.ajaxPrefilter(function(options, originalOptions, jqXHR) {
     if (!jqXHR.crossDomain && !Ember.isEmpty(session.get('authToken'))) {
-      jqXHR.setRequestHeader('Authorization', 'Token token="' + session.get('authToken') + '"');
+      jqXHR.setRequestHeader('Authorization', 'Bearer ' + session.get('authToken'));
     }
   });
+
+  this.externalLoginSucceeded = function(sessionData) {
+    session.setup(sessionData);
+    container.lookup('route:application').send('loginSucceeded');
+  };
+  this.externalLoginFailed = function(error) {
+    container.lookup('route:application').send('loginFailed', error);
+  };
 };
 
 })();
@@ -33,25 +41,78 @@ Ember.SimpleAuth.setup = function(app, options) {
 Ember.SimpleAuth.Session = Ember.Object.extend({
   init: function() {
     this._super();
-    this.set('authToken', sessionStorage.authToken);
+    this.setProperties({
+      authToken:       sessionStorage.authToken,
+      refreshToken:    sessionStorage.refreshToken,
+      authTokenExpiry: sessionStorage.authTokenExpiry
+    });
+    this.handleAuthTokenRefresh();
   },
-  setup: function(serverSession) {
-    this.set('authToken', (serverSession.session || {}).authToken);
+
+  setup: function(data) {
+    data = data || {};
+    this.setProperties({
+      authToken:       data.access_token,
+      refreshToken:    (data.refresh_token || this.get('refreshToken')),
+      authTokenExpiry: (data.expires_in > 0 ? data.expires_in * 1000 : this.get('authTokenExpiry')) || 0
+    });
   },
+
   destroy: function() {
-    this.set('authToken', undefined);
+    this.setProperties({
+      authToken:       undefined,
+      refreshToken:    undefined,
+      authTokenExpiry: undefined
+    });
   },
+
   isAuthenticated: Ember.computed('authToken', function() {
     return !Ember.isEmpty(this.get('authToken'));
   }),
-  authTokenObserver: Ember.observer(function() {
-    var authToken = this.get('authToken');
-    if (Ember.isEmpty(authToken)) {
-      delete sessionStorage.authToken;
+
+  handlePropertyChange: function(property) {
+    var value = this.get(property);
+    if (Ember.isEmpty(value)) {
+      delete sessionStorage[property];
     } else {
-      sessionStorage.authToken = this.get('authToken');
+      sessionStorage[property] = value;
     }
-  }, 'authToken')
+  },
+
+  authTokenObserver: Ember.observer(function() {
+    this.handlePropertyChange('authToken');
+  }, 'authToken'),
+
+  refreshTokenObserver: Ember.observer(function() {
+    this.handlePropertyChange('refreshToken');
+    this.handleAuthTokenRefresh();
+  }, 'refreshToken'),
+
+  authTokenExpiryObserver: Ember.observer(function() {
+    this.handlePropertyChange('authTokenExpiry');
+    this.handleAuthTokenRefresh();
+  }, 'authTokenExpiry'),
+
+  handleAuthTokenRefresh: function() {
+    if (Ember.SimpleAuth.autoRefreshToken) {
+      Ember.run.cancel(this.get('refreshAuthTokenTimeout'));
+      this.set('refreshAuthTokenTimeout', undefined);
+      var waitTime = this.get('authTokenExpiry') - 5000;
+      if (!Ember.isEmpty(this.get('refreshToken')) && waitTime > 0) {
+        this.set('refreshAuthTokenTimeout', Ember.run.later(this, function() {
+          var self = this;
+          Ember.$.ajax(Ember.SimpleAuth.serverTokenRoute, {
+            type:        'POST',
+            data:        'grant_type=refresh_token&refresh_token=' + this.get('refreshToken'),
+            contentType: 'application/x-www-form-urlencoded'
+          }).then(function(response) {
+            self.setup(response);
+            self.handleAuthTokenRefresh();
+          });
+        }, waitTime));
+      }
+    }
+  }
 });
 
 })();
@@ -62,12 +123,14 @@ Ember.SimpleAuth.Session = Ember.Object.extend({
 Ember.SimpleAuth.AuthenticatedRouteMixin = Ember.Mixin.create({
   beforeModel: function(transition) {
     if (!this.get('session.isAuthenticated')) {
-      this.redirectToLogin(transition);
+      transition.abort();
+      this.triggerLogin(transition);
     }
   },
-  redirectToLogin: function(transition) {
+
+  triggerLogin: function(transition) {
     this.set('session.attemptedTransition', transition);
-    this.transitionTo(Ember.SimpleAuth.loginRoute);
+    this.send('login');
   }
 });
 
@@ -77,30 +140,21 @@ Ember.SimpleAuth.AuthenticatedRouteMixin = Ember.Mixin.create({
 
 (function() {
 Ember.SimpleAuth.LoginControllerMixin = Ember.Mixin.create({
-  serializeCredentials: function(identification, password) {
-    return { session: { identification: identification, password: password } };
+  tokenRequestOptions: function(username, password) {
+    var postData = ['grant_type=password', 'username=' + username, 'password=' + password].join('&');
+    return { type: 'POST', data: postData, contentType: 'application/x-www-form-urlencoded' };
   },
   actions: {
     login: function() {
       var self = this;
       var data = this.getProperties('identification', 'password');
       if (!Ember.isEmpty(data.identification) && !Ember.isEmpty(data.password)) {
-        var postData = JSON.stringify(self.serializeCredentials(data.identification, data.password));
-        Ember.$.ajax(Ember.SimpleAuth.serverSessionRoute, {
-          type:        'POST',
-          data:        postData,
-          contentType: 'application/json'
-        }).then(function(response) {
+        var requestOptions = this.tokenRequestOptions(data.identification, data.password);
+        Ember.$.ajax(Ember.SimpleAuth.serverTokenRoute, requestOptions).then(function(response) {
           self.get('session').setup(response);
-          var attemptedTransition = self.get('session.attemptedTransition');
-          if (attemptedTransition) {
-            attemptedTransition.retry();
-            self.set('session.attemptedTransition', null);
-          } else {
-            self.transitionToRoute(Ember.SimpleAuth.routeAfterLogin);
-          }
-        }, function() {
-          Ember.tryInvoke(self, 'loginFailed', arguments);
+          self.send('loginSucceeded');
+        }, function(xhr, status, error) {
+          self.send('loginFailed', xhr, status, error);
         });
       }
     }
@@ -112,13 +166,29 @@ Ember.SimpleAuth.LoginControllerMixin = Ember.Mixin.create({
 
 
 (function() {
-Ember.SimpleAuth.LogoutRouteMixin = Ember.Mixin.create({
-  beforeModel: function() {
-    var self = this;
-    Ember.$.ajax(Ember.SimpleAuth.serverSessionRoute, { type: 'DELETE' }).always(function(response) {
-      self.get('session').destroy();
-      self.transitionTo(Ember.SimpleAuth.routeAfterLogout);
-    });
+Ember.SimpleAuth.ApplicationRouteMixin = Ember.Mixin.create({
+  actions: {
+    login: function() {
+      this.transitionTo(Ember.SimpleAuth.loginRoute);
+    },
+
+    loginSucceeded: function() {
+      var attemptedTransition = this.get('session.attemptedTransition');
+      if (attemptedTransition) {
+        attemptedTransition.retry();
+        this.set('session.attemptedTransition', undefined);
+      } else {
+        this.transitionTo(Ember.SimpleAuth.routeAfterLogin);
+      }
+    },
+
+    loginFailed: function() {
+    },
+
+    logout: function() {
+      this.get('session').destroy();
+      this.transitionTo(Ember.SimpleAuth.routeAfterLogout);
+    }
   }
 });
 
