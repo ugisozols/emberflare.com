@@ -2,26 +2,30 @@ EmberFlare.LoginRoute = Ember.Route.extend({
   actions: {
     login: function() {
       var loginController = this.controllerFor('login'),
-          username = loginController.get('username'),
-          password = loginController.get('password');
+          username = loginController.get("username"),
+          password = loginController.get('password'),
+          self = this;
 
-      // this would normally be done asynchronously
-      if (username === 'abc' && password === '123') {
-        localStorage.authToken = "auth-token-here";
+      if (!Ember.isEmpty(username) && !Ember.isEmpty(password)) {
+        var postData = { session: { username: username, password: password } };
 
-        var applicationController = this.controllerFor('application');
-        var transition = applicationController.get('savedTransition');
+        $.post("/api/session", postData).then(function(response) {
+          $.cookie("auth_token", response.token)
 
-        // set isLoggedIn so the UI shows the logout button
-        applicationController.login();
+          var applicationController = self.controllerFor("application");
+          var transition = applicationController.get('savedTransition');
 
-        // if the user was going somewhere, send them along, otherwise
-        // default to `/posts`
-        if (transition) {
-          transition.retry();
-        } else {
-          this.transitionTo('entries');
-        }
+          applicationController.set("userName", username);
+          applicationController.login();
+
+          if (transition) {
+            transition.retry();
+          } else {
+            self.transitionTo('entries');
+          }
+        }, function(response) {
+          // failure
+        });
       }
     }
   }

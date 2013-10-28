@@ -1,8 +1,11 @@
 {{#link-to "entries"}}Entries{{/link-to}} |
-{{#link-to "new"}}New Entry{{/link-to}}
+{{#link-to "entries.new"}}New Entry{{/link-to}} |
 
-{{#if isLoggedIn}}
-  <button {{action "logout"}}>Log Out</button>
+{{#if session.isAuthenticated}}
+  {{#link-to 'logout'}}Logout{{/link-to}}
+  <p class="navbar-text pull-right">Your are currently signed in</p>
+{{else}}
+  {{#link-to 'login'}}Login{{/link-to}}
 {{/if}}
 
 <br><br>

@@ -1,0 +1,16 @@
+New ...
+<hr>
+
+<form {{action "createEntry" on="submit" }}>
+  Title: {{input type="text" placeholder="Title ...." value=model.title}}
+  <br>
+  Content: {{textarea placeholder="Content" value=model.content}}
+  <br>
+  {{input type="submit" value="Create" disabled=fieldsEmpty}}
+  <hr>
+</form>
+
+
+{{#if newContent}}
+  {{format-markdown newContent}}
+{{/if}}
