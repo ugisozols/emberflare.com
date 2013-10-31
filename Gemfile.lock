@@ -52,7 +52,7 @@ GEM
       execjs (>= 1.2)
       handlebars-source
       railties (>= 3.1)
-    ember-source (1.1.1)
+    ember-source (1.1.2)
       handlebars-source (= 1.0.12)
     erubis (2.7.0)
     eventmachine (1.0.3)
@@ -134,7 +134,7 @@ PLATFORMS
 DEPENDENCIES
   active_model_serializers!
   ember-rails
-  ember-source (= 1.1.1)
+  ember-source (= 1.1.2)
   jquery-rails
   pry-rails
   quiet_assets

@@ -8,7 +8,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'jquery-rails'
 
 gem 'ember-rails'
-gem 'ember-source', '1.1.1'
+gem 'ember-source', '1.1.2'
 
 gem "thin"
 group :development do
