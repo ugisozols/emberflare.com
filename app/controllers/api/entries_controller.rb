@@ -1,6 +1,4 @@
 class Api::EntriesController < ApplicationController
-  # before_filter :auth_only!, :only => :create
-
   respond_to :json
 
   def index
@@ -20,6 +18,12 @@ class Api::EntriesController < ApplicationController
   private
 
   def entry_params
-    params.require(:entry).permit(:title, :content, :author)
+    _params = params.require(:entry).permit(:title, :content, :author)
+
+    if current_user
+      _params.merge! :user_id => current_user.id
+    end
+
+    _params
   end
 end

@@ -6,16 +6,8 @@ class ApplicationController < ActionController::Base
 
   def current_user
     @current_user ||= begin
-      auth_token = request.env['HTTP_X_AUTHENTICATION_TOKEN']
-      User.find_by(:token => auth_token) if !!auth_token
-    end
-  end
-
-  private
-
-  def auth_only!
-    if current_user.nil?
-      render json: {}, status: 401
+      auth_token = request.env["HTTP_AUTHORIZATION"][/\w+\Z/]
+      User.find_by(:token => auth_token)
     end
   end
 end
