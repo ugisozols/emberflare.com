@@ -1,20 +1,26 @@
-New ...
-<hr>
+{{#if isAdding}}
+  Adding ...
+{{else}}
 
-<form {{action "createEntry" on="submit" }}>
-  {{#unless session.isAuthenticated}}
-    Author: {{input type="text" placeholder="Author ...." value=model.author}}
-    <br>
-  {{/unless}}
-  Title: {{input type="text" placeholder="Title ...." value=model.title}}
-  <br>
-  Content: {{textarea placeholder="Content" value=model.content}}
-  <br>
-  {{input type="submit" value="Create" disabled=fieldsEmpty}}
+  New ...
   <hr>
-</form>
+
+  <form {{action "createEntry" on="submit" }}>
+    {{#unless session.isAuthenticated}}
+      Author: {{input type="text" placeholder="Author ...." value=model.author}}
+      <br>
+    {{/unless}}
+    Title: {{input type="text" placeholder="Title ...." value=model.title}}
+    <br>
+    Content: {{textarea placeholder="Content" value=model.content}}
+    <br>
+    {{input type="submit" value="Create" disabled=fieldsEmpty}}
+    <hr>
+  </form>
 
 
-{{#if newContent}}
-  {{format-markdown newContent}}
+  {{#if newContent}}
+    {{format-markdown newContent}}
+  {{/if}}
+
 {{/if}}

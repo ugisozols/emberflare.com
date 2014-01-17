@@ -7,17 +7,6 @@ EmberFlare.EntriesNewRoute = Ember.Route.extend({
     controller.set("model", model);
   },
 
-  actions: {
-    createEntry: function() {
-      var self = this;
-      var model = this.controllerFor("entriesNew").get("model");
-
-      model.save().then(function() {
-        self.transitionTo("entries.index");
-      });
-    }
-  },
-
   deactivate: function() {
     var model = this.controllerFor("entriesNew").get("model");
 
