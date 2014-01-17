@@ -1,7 +1,7 @@
 class EntrySerializer < ActiveModel::Serializer
-  attributes :id, :title, :content, :author, :username
+  attributes :id, :title, :content, :author
 
-  def username
+  def author
     if (user = object.user)
       user.username
     else
