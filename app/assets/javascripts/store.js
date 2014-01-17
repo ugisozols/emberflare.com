@@ -1,3 +1,5 @@
-EmberFlare.Store = DS.Store.extend({
-  adapter: DS.FixtureAdapter
+EmberFlare.ApplicationAdapter = DS.ActiveModelAdapter.extend();
+
+DS.RESTAdapter.reopen({
+  namespace: 'api'
 });

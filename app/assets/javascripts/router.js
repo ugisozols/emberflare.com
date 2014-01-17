@@ -5,3 +5,7 @@ EmberFlare.Router.map(function() {
     this.route("new");
   });
 });
+
+EmberFlare.Router.reopen({
+  location: "history"
+});

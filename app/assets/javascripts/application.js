@@ -9,15 +9,7 @@
 //= require ember_flare
 
 EmberFlare = Ember.Application.create({
-  LOG_ACTIVE_GENERATION: true
+  LOG_TRANSITIONS: true
 });
-
-EmberFlare.ApplicationAdapter = DS.RESTAdapter.extend({
-  namespace: 'api'
-});
-
-// EmberFlare.Router.reopen({
-//   location: "history"
-// });
 
 //= require_tree .
