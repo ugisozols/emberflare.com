@@ -1,12 +1,24 @@
-{{#link-to "entries"}}Entries{{/link-to}} |
-{{#link-to "entries.new"}}New Entry{{/link-to}} |
+<div class="navbar navbar-static-top">
+  <div class="navbar-inner">
+    <div class="container">
+      {{link-to "EmberFlare" "entries" class="brand"}}
+      <ul class="nav">
+        <li>{{#link-to "entries"}}Entries{{/link-to}}</li>
+        <li>{{#link-to "entries.new"}}New Entry{{/link-to}}</li>
+      </ul>
+      <ul class="nav pull-right">
+        {{#if session.isAuthenticated}}
+          <button {{ action 'logout' }}>Logout</button> - you're looged in!
+        {{else}}
+          <button {{ action 'login' }}>Login</button>
+        {{/if}}
+      </ul>
+    </div>
+  </div>
+</div>
 
-{{#if session.isAuthenticated}}
-  <button {{ action 'logout' }}>Logout</button> - you're looged in!
-{{else}}
-  <button {{ action 'login' }}>Login</button>
-{{/if}}
 
-<br><br>
+<div class="container">
+  {{outlet}}
+</div>
 
-{{outlet}}
