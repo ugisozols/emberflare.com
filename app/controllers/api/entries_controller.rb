@@ -1,8 +1,8 @@
-class Api::EntriesController < ApplicationController
+class Api::EntriesController < ApiController
   respond_to :json
 
   def index
-    respond_with Entry.all
+    respond_with Entry.includes(:user)
   end
 
   def create
@@ -18,12 +18,10 @@ class Api::EntriesController < ApplicationController
   private
 
   def entry_params
-    _params = params.require(:entry).permit(:title, :content, :author)
+    permitted_params = params.require(:entry).permit(:title, :content, :author)
 
-    if current_user
-      _params.merge! :user_id => current_user.id
-    end
+    permitted_params.merge! :user_id => current_user.id if current_user
 
-    _params
+    permitted_params
   end
 end

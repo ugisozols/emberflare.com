@@ -1,4 +1,4 @@
-class Api::SessionsController < ApplicationController
+class Api::SessionsController < ApiController
   def create
     if session_params[:token]
       u = User.find_by(:token => session_params[:token])
