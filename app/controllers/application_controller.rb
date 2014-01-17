@@ -6,7 +6,8 @@ class ApplicationController < ActionController::Base
 
   def current_user
     @current_user ||= begin
-      auth_token = request.env["HTTP_AUTHORIZATION"][/\w+\Z/]
+      env = request.env["HTTP_AUTHORIZATION"]
+      auth_token = env[/\w+\Z/] if env
       User.find_by(:token => auth_token)
     end
   end
