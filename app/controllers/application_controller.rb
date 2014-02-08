@@ -5,11 +5,10 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   def current_user
-    @current_user ||= begin
-      env = request.env["HTTP_AUTHORIZATION"]
-      if env
-        User.find_by(:token => env[/\w+\Z/])
-      end
-    end
+    @current_user ||= access_token && User.find_by_token(access_token)
+  end
+
+  def access_token
+    @access_token ||= request.authorization && request.authorization.split(' ').last
   end
 end

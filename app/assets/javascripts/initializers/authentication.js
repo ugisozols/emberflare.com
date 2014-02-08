@@ -1,10 +1,10 @@
 Ember.Application.initializer({
   name: 'authentication',
   initialize: function(container, application) {
-    Ember.SimpleAuth.setup(container, application, {
-      routeAfterLogin: "entries.index",
-      routeAfterLogout: "entries.index",
-      serverTokenRoute: "session"
+    Ember.SimpleAuth.setup(application, {
+      routeAfterAuthentication: "entries.index",
+      routeAfterInvalidation: "entries.index",
+      routeAfterInvalidation: "entries.index"
     });
   }
 });

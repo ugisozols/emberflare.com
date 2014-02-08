@@ -8,9 +8,9 @@
       </ul>
       <ul class="nav pull-right">
         {{#if session.isAuthenticated}}
-          <button {{ action 'logout' }}>Logout</button> - you're looged in!
+          <li><a {{ action 'invalidateSession' }}>Logout</a></li>
         {{else}}
-          <button {{ action 'login' }}>Login</button>
+          <li><a {{ action 'authenticateSession' }}>Login</a></li>
         {{/if}}
       </ul>
     </div>
