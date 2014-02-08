@@ -9,7 +9,7 @@ gem "bootstrap-sass", "~> 2.3.2.2"
 gem 'jquery-rails'
 
 gem 'ember-rails'
-gem 'ember-source', '1.3.1.1'
+gem 'ember-source', '1.3.2'
 
 gem "thin"
 group :development do
