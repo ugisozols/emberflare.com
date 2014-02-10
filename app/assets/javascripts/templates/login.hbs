@@ -1,3 +1,9 @@
+{{#if loginFailed}}
+  <div class="alert alert-error">
+    Login failed! Please try again.
+  </div>
+{{/if}}
+
 <form {{action authenticate on='submit'}}>
   <label for="identification">Login</label>
   {{view Ember.TextField id='identification' valueBinding='identification' placeholder='Enter Login'}}
