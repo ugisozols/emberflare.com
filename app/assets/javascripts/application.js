@@ -5,7 +5,7 @@
 //= require ember-data
 //= require ember-simple-auth
 //= require showdown.min
-//= require hex_md5
+//= require md5
 //= require_self
 //= require ember_flare
 
