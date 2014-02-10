@@ -8,7 +8,10 @@
       </ul>
       <ul class="nav pull-right">
         {{#if session.isAuthenticated}}
-          <li><a {{ action 'invalidateSession' }}>Logout</a></li>
+          <li>
+            {{gravatar-image email=session.email}} {{session.username}}
+            <a {{ action 'invalidateSession' }}>Logout</a>
+          </li>
         {{else}}
           <li>{{#link-to 'login'}}Login{{/link-to}}</li>
         {{/if}}
