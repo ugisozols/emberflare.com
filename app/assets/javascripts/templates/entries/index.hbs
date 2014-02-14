@@ -1,6 +1,7 @@
 {{#each}}
+  {{gravatar-image email=authorEmail size="90"}}
   <h4>{{title}}</h4>
-  <h6>bt {{author}}</h6>
-  <p>{{content}}</p>
+  <h6>by {{authorName}}</h6>
+  <p>{{format-markdown content}}</p>
   <hr>
 {{/each}}
