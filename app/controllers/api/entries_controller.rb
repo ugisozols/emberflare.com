@@ -18,7 +18,7 @@ class Api::EntriesController < ApiController
   private
 
   def entry_params
-    permitted_params = params.require(:entry).permit(:title, :content, :author)
+    permitted_params = params.require(:entry).permit(:title, :content, :author_name)
 
     permitted_params.merge! :user_id => current_user.id if current_user
 

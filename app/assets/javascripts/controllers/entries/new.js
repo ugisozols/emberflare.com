@@ -8,10 +8,10 @@ EmberFlare.EntriesNewController = Ember.ObjectController.extend({
     } else {
       return Ember.isEmpty(this.get("model.title")) ||
         Ember.isEmpty(this.get("model.content")) ||
-        Ember.isEmpty(this.get("model.author"))
+        Ember.isEmpty(this.get("model.authorName"))
     }
 
-  }.property("model.title", "model.content", "model.author"),
+  }.property("model.title", "model.content", "model.authorName"),
 
   actions: {
     createEntry: function() {
