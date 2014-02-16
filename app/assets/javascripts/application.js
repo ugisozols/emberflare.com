@@ -6,6 +6,7 @@
 //= require ember-simple-auth
 //= require showdown.min
 //= require md5
+//= require jquery.tipsy
 //= require_self
 //= require ember_flare
 
@@ -13,4 +14,6 @@ EmberFlare = Ember.Application.create({
   LOG_TRANSITIONS: true
 });
 
-//= require_tree .
+$(document).ready(function() {
+  $("#signout, #account").tipsy();
+});

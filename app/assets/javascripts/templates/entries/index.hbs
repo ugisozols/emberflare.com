@@ -1,7 +1,16 @@
 {{#each}}
-  {{gravatar-image email=authorEmail size="90"}}
-  <h4>{{title}}</h4>
-  <h6>by {{authorName}}</h6>
-  <p>{{format-markdown content}}</p>
-  <hr>
+  <div class="row entry">
+    <div class="span2">
+      {{gravatar-image email=authorEmail size="90"}}
+      <div class="author">{{authorName}}</div>
+    </div>
+
+    <div class="span10">
+      <div class="title">{{title}}</div>
+      <div class="posted-at"><i class="fa fa-clock-o"></i> {{createdAt}}</div>
+      <hr>
+
+      <div class="content">{{format-markdown content}}</div>
+    </div>
+  </div>
 {{/each}}

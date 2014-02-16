@@ -1,15 +1,120 @@
 @import "bootstrap";
+@import "font-awesome";
+@import "tipsy";
+
+body {
+  background-color: #E5E9EC;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.entry {
+  background-color: #ffffff;
+  padding: 20px;
+  margin-bottom: 30px;
+
+  .span2 {
+    width: 100px;
+
+    .author {
+      margin-top: 7px;
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+  }
+  .span10 {
+    width: 740px;
+
+    hr {
+      margin-top: 7px;
+    }
+
+    .title {
+      color: #F35958;
+      font-weight: bold;
+      font-size: 23px;
+      line-height: 30px;
+    }
+
+    .posted-at {
+      margin-top: 5px;
+      color: #8B91A0;
+    }
+
+    .content {
+      font-size: 15px;
+      text-align: justify;
+    }
+  }
+}
+
+.gravatar {
+  border-radius: 50%;
+}
+
+.user-details {
+  min-width: 200px;
+  text-align: right;
+
+  .gravatar {
+    display: inline-block;
+  }
+
+  .h-separate {
+    margin: 0px 10px 0px 8px;
+    border-left: 1px solid #E5E9EC;
+  }
+
+  a, a:hover {
+    text-decoration: none;
+  }
+}
 
 .navbar {
-  .brand {
-    font-weight: bold;
-    color: #E3310D;
+  margin-bottom: 20px;
+
+  .container {
+    margin-top: 20px;
+  }
+
+  .navbar-inner {
+    min-height: 80px;
+    background: #22262E;
+    color: #fff;
+    font-size: 16px;
+
+    a {
+      color: #fff;
+
+      &:hover {
+        color: #0AA699;
+      }
+    }
+
+    .brand {
+      font-weight: bold;
+      color: #0AA699;
+      padding: 10px 20px 10px 0;
+    }
+
+    #signout, #account {
+      margin-left: 12px;
+    }
+
+    .nav > li > a {
+      text-shadow: none;
+      // font-size: 15px;
+      color: #fff;
+
+      &:hover {
+        color: #0AA699;
+      }
+    }
   }
 }
 
 .container {
-  h1, h2, h3, h4, h5, h6 {
-    color: #3EA0C0;
+  a {
+    color: #0AA699;
   }
   h4 {
     margin-bottom: 0;

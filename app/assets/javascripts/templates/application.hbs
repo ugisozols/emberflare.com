@@ -1,25 +1,29 @@
-<div class="navbar navbar-static-top">
+<div class="navbar navbar-inverse navbar-static-top">
   <div class="navbar-inner">
     <div class="container">
       {{link-to "EmberFlare" "entries" class="brand"}}
       <ul class="nav">
         <li>{{#link-to "entries"}}Entries{{/link-to}}</li>
-        <li>{{#link-to "entries.new"}}New Entry{{/link-to}}</li>
+        <li>{{#link-to "entries.new"}}Submit{{/link-to}}</li>
       </ul>
-      <ul class="nav pull-right">
-        {{#if session.isAuthenticated}}
-          <li>
-            {{gravatar-image email=session.email}} {{session.username}}
-            <a {{ action 'invalidateSession' }}>Logout</a>
-          </li>
-        {{else}}
-          <li>{{#link-to 'login'}}Login{{/link-to}}</li>
-        {{/if}}
-      </ul>
+      <div class="pull-right">
+        <div class="user-details">
+          {{#if session.isAuthenticated}}
+            {{session.username}}&nbsp;&nbsp;&nbsp;{{gravatar-image email=session.email}}
+            <a href="" id="account" title="Account settings">
+              <i class="fa fa-cog"></i>
+            </a>
+            <a {{ action 'invalidateSession' }} href="" id="signout" title="Sign out">
+              <i class="fa fa-sign-out"></i>
+            </a>
+          {{else}}
+            {{#link-to 'login'}}Login{{/link-to}}
+          {{/if}}
+        </div>
+      </div>
     </div>
   </div>
 </div>
-
 
 <div class="container">
   {{outlet}}

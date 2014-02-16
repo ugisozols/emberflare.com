@@ -1,5 +1,7 @@
 EmberFlare.GravatarImageComponent = Ember.Component.extend({
-  size: 32,
+  classNames: ["gravatar"],
+
+  size: 40,
   email: "",
 
   gravatarUrl: function() {
