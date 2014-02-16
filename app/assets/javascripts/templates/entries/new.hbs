@@ -1,28 +1,40 @@
-{{#if isAdding}}
-  Adding ...
-{{else}}
+<div class="row entry">
+  {{#if isAdding}}
+    Adding ...
+  {{else}}
+    <form {{action "createEntry" on="submit" }} class="form-horizontal">
+      {{#unless session.isAuthenticated}}
+        <div class="control-group">
+          <label class="control-label" for="inputAuthor">Author</label>
+          <div class="controls">
+            {{input type="text" value=model.authorName id="inputAuthor" placeholder="Author"}}
+          </div>
+        </div>
+      {{/unless}}
+      <div class="control-group">
+        <label class="control-label" for="inputTitle">Title</label>
+        <div class="controls">
+          {{input type="text" value=model.title id="inputTitle" placeholder="Title"}}
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputContent">Content</label>
+        <div class="controls">
+          {{textarea value=model.content id="inputContent" placeholder="Content"}}
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          {{input type="submit" value="Submit" disabled=fieldsEmpty class="btn"}}
+        </div>
+      </div>
+    </form>
 
-  New ...
-  <hr>
-
-  <form {{action "createEntry" on="submit" }}>
-    {{#if session.isAuthenticated}}
-      Posting as: {{session.username}}
-    {{else}}
-      Author: {{input type="text" placeholder="Author ...." value=model.author}}
-    {{/if}}
-    <br>
-    Title: {{input type="text" placeholder="Title ...." value=model.title}}
-    <br>
-    Content: {{textarea placeholder="Content" value=model.content}}
-    <br>
-    {{input type="submit" value="Create" disabled=fieldsEmpty}}
     <hr>
-  </form>
 
+    {{#if model.content}}
+      {{format-markdown model.content}}
+    {{/if}}
 
-  {{#if model.content}}
-    {{format-markdown model.content}}
   {{/if}}
-
-{{/if}}
+</div>
