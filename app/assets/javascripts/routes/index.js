@@ -1,4 +1,4 @@
-EmberFlare.IndexRoute = Ember.Route.extend(Ember.SimpleAuth.ApplicationRouteMixin, {
+EmberFlare.IndexRoute = Ember.Route.extend({
   beforeModel: function() {
     this.transitionTo("entries");
   }
