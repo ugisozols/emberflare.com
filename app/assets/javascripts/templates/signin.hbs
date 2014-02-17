@@ -1,13 +1,13 @@
-{{#if loginFailed}}
+{{#if signinFailed}}
   <div class="alert alert-error">
-    Login failed! Please try again.
+    Sign in failed! Please try again.
   </div>
 {{/if}}
 
 <form {{action authenticate on='submit'}}>
-  <label for="identification">Login</label>
-  {{view Ember.TextField id='identification' valueBinding='identification' placeholder='Enter Login'}}
+  <label for="identification">Sign in</label>
+  {{view Ember.TextField id='identification' valueBinding='identification' placeholder='Enter Username'}}
   <label for="password">Password</label>
   {{view Ember.TextField id='password' type='password' valueBinding='password' placeholder='Enter Password'}}
-  <button type="submit">Login</button>
+  <button type="submit">Sign in</button>
 </form>
