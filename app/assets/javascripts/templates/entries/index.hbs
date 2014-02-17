@@ -7,7 +7,9 @@
 
     <div class="span10">
       <div class="title">{{title}}</div>
-      <div class="posted-at"><i class="fa fa-clock-o"></i> {{createdAt}}</div>
+      <div class="posted-at">
+        <i class="fa fa-clock-o"></i> {{format-date createdAt}}
+      </div>
       <hr>
 
       <div class="content">{{format-markdown content}}</div>
