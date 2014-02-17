@@ -2,6 +2,7 @@
 
   {{#if signinFailed}}
     <div class="alert alert-error">
+      <button {{ action "clearWarning" }}type="button" class="close">&times;</button>
       Sign in failed! Either the username or password was incorrect.
     </div>
   {{/if}}

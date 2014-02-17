@@ -4,6 +4,10 @@ EmberFlare.SigninController = Ember.Controller.extend(Ember.SimpleAuth.LoginCont
   actions: {
     sessionAuthenticationFailed: function() {
       this.set("signinFailed", true);
+    },
+
+    clearWarning: function() {
+      this.set("signinFailed", false);
     }
   }
 });
