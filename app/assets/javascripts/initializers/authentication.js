@@ -3,7 +3,6 @@ Ember.Application.initializer({
   initialize: function(container, application) {
     Ember.SimpleAuth.setup(application, {
       routeAfterAuthentication: "entries.index",
-      routeAfterInvalidation: "entries.index",
       routeAfterInvalidation: "entries.index"
     });
   }
