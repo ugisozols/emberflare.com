@@ -1,13 +1,29 @@
-{{#if signinFailed}}
-  <div class="alert alert-error">
-    Sign in failed! Please try again.
-  </div>
-{{/if}}
+<div class="row signin">
 
-<form {{action authenticate on='submit'}}>
-  <label for="identification">Sign in</label>
-  {{view Ember.TextField id='identification' valueBinding='identification' placeholder='Enter Username'}}
-  <label for="password">Password</label>
-  {{view Ember.TextField id='password' type='password' valueBinding='password' placeholder='Enter Password'}}
-  <button type="submit">Sign in</button>
-</form>
+  {{#if signinFailed}}
+    <div class="alert alert-error">
+      Sign in failed! Either the username or password was incorrect.
+    </div>
+  {{/if}}
+
+  <form {{action authenticate on='submit'}} class="form-horizontal">
+    <div class="control-group">
+      <label class="control-label" for="identification">Username</label>
+      <div class="controls">
+        {{view Ember.TextField id='identification' valueBinding='identification' placeholder='Enter Username'}}
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="password">Password</label>
+      <div class="controls">
+        {{view Ember.TextField id='password' type='password' valueBinding='password' placeholder='Enter Password'}}
+      </div>
+    </div>
+    <div class="control-group">
+      <div class="controls">
+        <button type="submit" class="btn">Sign in</button>
+      </div>
+    </div>
+  </form>
+
+</div>
