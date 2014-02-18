@@ -18,6 +18,13 @@ textarea:focus, input[type="text"]:focus, input[type="password"]:focus {
   outline: 0 none;
 }
 
+.title {
+  color: #F35958;
+  font-weight: bold;
+  font-size: 23px;
+  line-height: 30px;
+}
+
 .entry {
   background-color: #ffffff;
   padding: 20px;
@@ -88,9 +95,9 @@ textarea:focus, input[type="text"]:focus, input[type="password"]:focus {
   }
 }
 
-.signin {
+.signin, .signup, .submit {
   background-color: #ffffff;
-  padding: 20px 20px 0 20px;
+  padding: 15px 20px 0 20px;
 }
 
 .account {
