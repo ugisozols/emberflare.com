@@ -3,10 +3,6 @@ EmberFlare.EntriesNewRoute = Ember.Route.extend({
     return this.store.createRecord("entry");
   },
 
-  setupController: function(controller, model) {
-    controller.set("model", model);
-  },
-
   deactivate: function() {
     var model = this.controllerFor("entriesNew").get("model");
 
