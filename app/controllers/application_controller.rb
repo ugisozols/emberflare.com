@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   def current_user
-    @current_user ||= access_token && User.find_by_token(access_token)
+    @current_user ||= access_token && User.find_by(:token => access_token)
   end
 
   def access_token
