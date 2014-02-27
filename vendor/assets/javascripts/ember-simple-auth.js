@@ -1,10 +1,24 @@
- // Version: 0.1.1
+ // Version: 0.1.2
 
 (function() {
 'use strict';
 
 function extractLocationOrigin(location) {
-  return location.protocol + '//' + location.hostname + (location.port !== '' ? ':' + location.port : '');
+  if (Ember.typeOf(location) === 'string') {
+    var link = document.createElement('a');
+    link.href = location;
+    //IE requires the following line when url is relative.
+    //First assignment of relative url to link.href results in absolute url on link.href but link.hostname and other properties are not set
+    //Second assignment of absolute url to link.href results in link.hostname and other properties being set as expected
+    link.href = link.href;
+    location = link;
+  }
+  var port = location.port;
+  if (Ember.isEmpty(port)) {
+    //need to include the port whether its actually present or not as some versions of IE will always set it
+    port = location.protocol === 'http:' ? '80' : (location.protocol === 'https:' ? '443' : '');
+  }
+  return location.protocol + '//' + location.hostname + (port !== '' ? ':' + port : '');
 }
 
 /**
@@ -63,13 +77,14 @@ Ember.SimpleAuth = Ember.Namespace.create({
     Ember.Application.initializer({
       name: 'authentication',
       initialize: function(container, application) {
-        Ember.SimpleAuth.setup(application);
+        Ember.SimpleAuth.setup(container, application);
       }
     });
     ```
 
     @method setup
     @static
+    @param {Container} container The Ember.js application's dependency injection container
     @param {Ember.Application} application The Ember.js application instance
     @param {Object} [options]
       @param {String} [options.authenticationRoute] route to transition to for authentication - defaults to `'login'`
@@ -79,20 +94,24 @@ Ember.SimpleAuth = Ember.Namespace.create({
       @param {Object} [options.authorizer] The authorizer _class_ to use; must extend `Ember.SimpleAuth.Authorizers.Base` - defaults to `Ember.SimpleAuth.Authorizers.OAuth2`
       @param {Object} [options.store] The store _class_ to use; must extend `Ember.SimpleAuth.Stores.Base` - defaults to `Ember.SimpleAuth.Stores.LocalStorage`
   **/
-  setup: function(application, options) {
+  setup: function(container, application, options) {
     options                       = options || {};
     this.routeAfterAuthentication = options.routeAfterAuthentication || this.routeAfterAuthentication;
     this.routeAfterInvalidation   = options.routeAfterInvalidation || this.routeAfterInvalidation;
     this.authenticationRoute      = options.authenticationRoute || this.authenticationRoute;
-    this._crossOriginWhitelist    = Ember.A(options.crossOriginWhitelist || []);
+    this._crossOriginWhitelist    = Ember.A(options.crossOriginWhitelist || []).map(function(origin) {
+      return extractLocationOrigin(origin);
+    });
+
+    container.register('ember-simple-auth:authenticators:oauth2', Ember.SimpleAuth.Authenticators.OAuth2);
 
     var store      = (options.store || Ember.SimpleAuth.Stores.LocalStorage).create();
-    var session    = Ember.SimpleAuth.Session.create({ store: store });
+    var session    = Ember.SimpleAuth.Session.create({ store: store, container: container });
     var authorizer = (options.authorizer || Ember.SimpleAuth.Authorizers.OAuth2).create({ session: session });
 
-    application.register('ember-simple-auth:session:current', session, { instantiate: false, singleton: true });
+    container.register('ember-simple-auth:session:current', session, { instantiate: false });
     Ember.A(['model', 'controller', 'view', 'route']).forEach(function(component) {
-      application.inject(component, 'session', 'ember-simple-auth:session:current');
+      container.injection(component, 'session', 'ember-simple-auth:session:current');
     });
 
     Ember.$.ajaxPrefilter(function(options, originalOptions, jqXHR) {
@@ -108,19 +127,10 @@ Ember.SimpleAuth = Ember.Namespace.create({
     @static
   */
   shouldAuthorizeRequest: function(url) {
-    this._linkOrigins    = this._linkOrigins || {};
+    this._urlOrigins     = this._urlOrigins || {};
     this._documentOrigin = this._documentOrigin || extractLocationOrigin(window.location);
-    var link = this._linkOrigins[url] || function() {
-      var link = document.createElement('a');
-      link.href = url;
-      //IE requires the following line when url is relative.
-      //First assignment of relative url to link.href results in absolute url on link.href but link.hostname and other properties are not set
-      //Second assignment of absolute url to link.href results in link.hostname and other properties being set as expected
-      link.href = link.href;
-      return (this._linkOrigins[url] = link);
-    }.apply(this);
-    var linkOrigin = extractLocationOrigin(link);
-    return this._crossOriginWhitelist.indexOf(linkOrigin) > -1 || linkOrigin === this._documentOrigin;
+    var urlOrigin        = this._urlOrigins[url] = this._urlOrigins[url] || extractLocationOrigin(url);
+    return this._crossOriginWhitelist.indexOf(urlOrigin) > -1 || urlOrigin === this._documentOrigin;
   }
 });
 
@@ -130,12 +140,6 @@ Ember.SimpleAuth = Ember.Namespace.create({
 
 (function() {
 'use strict';
-
-function classifyString(className) {
-  return Ember.A((className || '').split('.')).reduce(function(acc, klass) {
-    return (acc || {})[klass];
-  }, window);
-}
 
 /**
   __The session provides access to the current authentication state as well as
@@ -160,15 +164,15 @@ function classifyString(className) {
 */
 Ember.SimpleAuth.Session = Ember.ObjectProxy.extend({
   /**
-    The authenticator used to authenticate the session. This is only set when
-    the session is currently authenticated.
+    The authenticator factory used to authenticate the session. This is only
+    set when the session is currently authenticated.
 
     @property authenticator
-    @type Ember.SimpleAuth.Authenticators.Base
+    @type String
     @readOnly
     @default null
   */
-  authenticator: null,
+  authenticatorFactory: null,
   /**
     The store used to persist session properties. This is assigned during
     Ember.SimpleAuth's setup and can be specified there
@@ -207,12 +211,14 @@ Ember.SimpleAuth.Session = Ember.ObjectProxy.extend({
   init: function() {
     var _this = this;
     this.bindToStoreEvents();
-    var restoredContent = this.store.restore();
-    var authenticator   = this.createAuthenticator(restoredContent.authenticator);
-    if (!!authenticator) {
-      delete restoredContent.authenticator;
-      authenticator.restore(restoredContent).then(function(content) {
-        _this.setup(authenticator, content);
+    var restoredContent      = this.store.restore();
+    var authenticatorFactory = restoredContent.authenticatorFactory;
+    if (!!authenticatorFactory) {
+      delete restoredContent.authenticatorFactory;
+      this.container.lookup(authenticatorFactory).restore(restoredContent).then(function(content) {
+        _this.setup(authenticatorFactory, content);
+      }, function() {
+        _this.store.clear();
       });
     } else {
       this.store.clear();
@@ -231,15 +237,15 @@ Ember.SimpleAuth.Session = Ember.ObjectProxy.extend({
     unauthenticated.
 
     @method authenticate
-    @param {Ember.SimpleAuth.Authenticators.Base} authenticator The authenticator to authenticate with
+    @param {String} authenticatorFactory The authenticator factory to use as it is registered with Ember's container, see [Ember's API docs](http://emberjs.com/api/classes/Ember.Application.html#method_register)
     @param {Object} options The options to pass to the authenticator; depending on the type of authenticator these might be a set of credentials etc.
     @return {Ember.RSVP.Promise} A promise that resolves when the session was authenticated successfully
   */
-  authenticate: function(authenticator, options) {
+  authenticate: function(authenticatorFactory, options) {
     var _this = this;
     return new Ember.RSVP.Promise(function(resolve, reject) {
-      authenticator.authenticate(options).then(function(content) {
-        _this.setup(authenticator, content);
+      _this.container.lookup(authenticatorFactory).authenticate(options).then(function(content) {
+        _this.setup(authenticatorFactory, content);
         resolve();
       }, function(error) {
         _this.clear();
@@ -266,8 +272,9 @@ Ember.SimpleAuth.Session = Ember.ObjectProxy.extend({
   invalidate: function() {
     var _this = this;
     return new Ember.RSVP.Promise(function(resolve, reject) {
-      _this.authenticator.invalidate(_this.content).then(function() {
-        _this.authenticator.off('ember-simple-auth:session-updated');
+      var authenticator = _this.container.lookup(_this.authenticatorFactory);
+      authenticator.invalidate(_this.content).then(function() {
+        authenticator.off('ember-simple-auth:session-updated');
         _this.clear();
         resolve();
       }, function(error) {
@@ -280,16 +287,14 @@ Ember.SimpleAuth.Session = Ember.ObjectProxy.extend({
     @method setup
     @private
   */
-  setup: function(authenticator, content) {
+  setup: function(authenticatorFactory, content) {
     this.setProperties({
-      isAuthenticated: true,
-      authenticator:   authenticator,
-      content:         content
+      isAuthenticated:   true,
+      authenticatorFactory: authenticatorFactory,
+      content:           content
     });
     this.bindToAuthenticatorEvents();
-    var data = Ember.$.extend({
-      authenticator: this.authenticator.constructor.toString()
-    }, this.content);
+    var data = Ember.$.extend({ authenticatorFactory: authenticatorFactory }, this.content);
     this.store.clear();
     this.store.persist(data);
   },
@@ -300,20 +305,11 @@ Ember.SimpleAuth.Session = Ember.ObjectProxy.extend({
   */
   clear: function() {
     this.setProperties({
-      isAuthenticated: false,
-      authenticator:   null,
-      content:         null
+      isAuthenticated:   false,
+      authenticatorFactory: null,
+      content:           null
     });
     this.store.clear();
-  },
-
-  /**
-    @method createAuthenticator
-    @private
-  */
-  createAuthenticator: function(className) {
-    var authenticatorClass = classifyString(className);
-    return Ember.tryInvoke(authenticatorClass, 'create');
   },
 
   /**
@@ -322,9 +318,10 @@ Ember.SimpleAuth.Session = Ember.ObjectProxy.extend({
   */
   bindToAuthenticatorEvents: function() {
     var _this = this;
-    this.authenticator.off('ember-simple-auth:session-updated');
-    this.authenticator.on('ember-simple-auth:session-updated', function(content) {
-      _this.setup(_this.authenticator, content);
+    var authenticator = this.container.lookup(this.authenticatorFactory);
+    authenticator.off('ember-simple-auth:session-updated');
+    authenticator.on('ember-simple-auth:session-updated', function(content) {
+      _this.setup(_this.authenticatorFactory, content);
     });
   },
 
@@ -335,11 +332,11 @@ Ember.SimpleAuth.Session = Ember.ObjectProxy.extend({
   bindToStoreEvents: function() {
     var _this = this;
     this.store.on('ember-simple-auth:session-updated', function(content) {
-      var authenticator = _this.createAuthenticator(content.authenticator);
-      if (!!authenticator) {
-        delete content.authenticator;
-        authenticator.restore(content).then(function(content) {
-          _this.setup(authenticator, content);
+      var authenticatorFactory = content.authenticatorFactory;
+      if (!!authenticatorFactory) {
+        delete content.authenticatorFactory;
+        _this.container.lookup(authenticatorFactory).restore(content).then(function(content) {
+          _this.setup(authenticatorFactory, content);
         }, function() {
           _this.clear();
         });
@@ -465,23 +462,19 @@ Ember.SimpleAuth.Authorizers.OAuth2 = Ember.SimpleAuth.Authorizers.Base.extend({
   when any of the session properties change. The session listens to that event
   and will handle the changes accordingly.
 
-  __Custom authenticators have to be defined in the applications's namespace__;
-  otherwise their class name cannot be auto-detected and the session
-  restoration mechanism breaks (see
-  [Ember.SimpleAuth.Authenticators.Base#restore](#Ember-SimpleAuth-Authenticators-Base-restore)).
-  So instead of this:
+  __Custom authenticators have to be registered with Ember's dependency
+  injection container__ so that the session can retrieve an instance, e.g.:
 
   ```javascript
   var CustomAuthenticator = Ember.SimpleAuth.Authenticators.Base.extend({
     ...
   });
-  ```
-
-  the authenticator should be defined like this:
-
-  ```javascript
-  App.CustomAuthenticator = Ember.SimpleAuth.Authenticators.Base.extend({
-    ...
+  Ember.Application.initializer({
+    name: 'authentication',
+    initialize: function(container, application) {
+      container.register('app:authenticators:custom', CustomAuthenticator);
+      Ember.SimpleAuth.setup(container, application);
+    }
   });
   ```
 
@@ -1236,7 +1229,7 @@ Ember.SimpleAuth.AuthenticationControllerMixin = Ember.Mixin.create({
     */
     authenticate: function(options) {
       var _this = this;
-      this.get('session').authenticate(this.get('authenticator').create(), options).then(function() {
+      this.get('session').authenticate(this.get('authenticator'), options).then(function() {
         _this.send('sessionAuthenticationSucceeded');
       }, function(error) {
         _this.send('sessionAuthenticationFailed', error);
@@ -1268,7 +1261,7 @@ Ember.SimpleAuth.AuthenticationControllerMixin = Ember.Mixin.create({
   action, e.g.:
 
   ```handlebars
-  <form {{action login on='submit'}}>
+  <form {{action 'authenticate' on='submit'}}>
     <label for="identification">Login</label>
     {{input id='identification' placeholder='Enter Login' value=identification}}
     <label for="password">Password</label>
@@ -1289,7 +1282,7 @@ Ember.SimpleAuth.LoginControllerMixin = Ember.Mixin.create(Ember.SimpleAuth.Auth
     @type Ember.SimpleAuth.Authenticators.Base
     @default Ember.SimpleAuth.Authenticators.OAuth2
   */
-  authenticator: Ember.SimpleAuth.Authenticators.OAuth2,
+  authenticator: 'ember-simple-auth:authenticators:oauth2',
 
   actions: {
     /**
