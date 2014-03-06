@@ -5,7 +5,9 @@ EmberFlare.EntriesNewRoute = Ember.Route.extend({
 
   deactivate: function() {
     var model = this.controllerFor("entriesNew").get("model");
-
     model.rollback();
+    if (model.get("isNew")) {
+      model.deleteRecord();
+    }
   }
 });
