@@ -5,6 +5,7 @@ EmberFlare::Application.routes.draw do
 
   namespace :api do
     resources :entries, :only => [:index, :create]
+    resources :users, :only => [:create]
   end
 
   get "/*path" => "static#index"

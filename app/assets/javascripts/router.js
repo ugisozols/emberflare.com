@@ -1,5 +1,6 @@
 EmberFlare.Router.map(function() {
   this.route('signin');
+  this.route('signup');
   this.resource("account");
 
   this.resource('entries', function() {
