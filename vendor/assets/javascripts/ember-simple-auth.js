@@ -1,4 +1,4 @@
- // Version: 0.1.2
+ // Version: 0.1.3
 
 (function() {
 'use strict';
@@ -905,6 +905,7 @@ Ember.SimpleAuth.Stores.Cookie = Ember.SimpleAuth.Stores.Base.extend({
     this.knownCookies().forEach(function(cookie) {
       _this.write(cookie, null, (new Date(0)).toGMTString());
     });
+    this._lastProperties = null;
   },
 
   /**
@@ -1040,6 +1041,12 @@ Ember.SimpleAuth.Stores.LocalStorage = Ember.SimpleAuth.Stores.Base.extend({
   keyPrefix: 'ember_simple_auth:',
 
   /**
+    @property _triggerChangeEventTimeout
+    @private
+  */
+  _triggerChangeEventTimeout: null,
+
+  /**
     @method init
     @private
   */
@@ -1088,6 +1095,7 @@ Ember.SimpleAuth.Stores.LocalStorage = Ember.SimpleAuth.Stores.Base.extend({
     this.knownKeys().forEach(function(key) {
       localStorage.removeItem(key);
     });
+    this._lastProperties = null;
   },
 
   /**
@@ -1124,7 +1132,10 @@ Ember.SimpleAuth.Stores.LocalStorage = Ember.SimpleAuth.Stores.Base.extend({
       var encodedProperties = JSON.stringify(properties);
       if (encodedProperties !== _this._lastProperties) {
         _this._lastProperties = encodedProperties;
-        _this.trigger('ember-simple-auth:session-updated', properties);
+        Ember.run.cancel(_this._triggerChangeEventTimeout);
+        _this._triggerChangeEventTimeout = Ember.run.next(_this, function() {
+          this.trigger('ember-simple-auth:session-updated', properties);
+        });
       }
     });
   }
