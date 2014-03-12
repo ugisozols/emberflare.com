@@ -5,8 +5,7 @@ class SessionsController < ApplicationController
     if user && user.authenticate(session_params[:password])
       user.update_attribute :token, SecureRandom.hex
 
-      render json: { username: user.username, :email => user.email,
-        access_token: user.token, token_type: 'bearer' }
+      render json: user, :serializer => SessionSerializer, :root => false
     else
       head 401
     end
