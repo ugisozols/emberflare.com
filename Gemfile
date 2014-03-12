@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
 gem 'rails', '4.1.0.rc1'
-gem 'sqlite3'
 gem 'bcrypt-ruby', '~> 3.1.2'
+gem "active_model_serializers"
 
 gem 'sass-rails', '~> 4.0.0'
 gem 'uglifier', '>= 1.3.0'
@@ -14,9 +14,16 @@ gem 'ember-rails'
 gem 'ember-source', '1.4.0'
 
 gem "thin"
+
 group :development do
   gem "quiet_assets"
   gem "pry-rails"
+  gem 'sqlite3'
 end
 
-gem "active_model_serializers"
+group :production do
+  gem "pg"
+  gem 'rails_12factor'
+end
+
+ruby "2.1.1"
