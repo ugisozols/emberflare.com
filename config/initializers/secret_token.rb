@@ -9,4 +9,4 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-EmberFlare::Application.config.secret_key_base = '50474d049e171a22600812ebb956dcb469657f7433776a924cc30ca9507c2cba68b6a0e0be333f63d7e4d2fc27f3006e04a9e73083c22a8dc5bb6e66f244bfbb'
+EmberFlare::Application.config.secret_key_base = ENV["SECRET_KEY_BASE"]
