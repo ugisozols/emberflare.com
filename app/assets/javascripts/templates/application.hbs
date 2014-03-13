@@ -3,8 +3,9 @@
     <div class="container">
       {{link-to "EmberFlare" "entries" class="brand"}}
       <ul class="nav">
-        <li>{{#link-to "entries"}}Entries{{/link-to}}</li>
-        <li>{{#link-to "entries.new"}}Submit{{/link-to}}</li>
+        <li>{{link-to "Entries" "entries"}}</li>
+        <li>{{link-to "Submit" "entries.new"}}</li>
+        <li>{{link-to "About" "about"}}</li>
       </ul>
       <div class="pull-right">
         {{#if session.isAuthenticated}}
