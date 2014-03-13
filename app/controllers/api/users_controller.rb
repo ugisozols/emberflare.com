@@ -1,12 +1,10 @@
 class Api::UsersController < ApiController
-  def create
-    user = User.new(user_params)
+  respond_to :json
 
-    if user.save
-      render json: user, status: :created
-    else
-      render json: { errors: user.errors }, status: :unprocessable_entity
-    end
+  def create
+    user = User.create(user_params)
+
+    respond_with user, :location => "/signin"
   end
 
   private

@@ -6,13 +6,9 @@ class Api::EntriesController < ApiController
   end
 
   def create
-    entry = Entry.new(entry_params)
+    entry = Entry.create(entry_params)
 
-    if entry.save
-      render json: entry
-    else
-      render json: entry, status: 422
-    end
+    respond_with entry, :location => api_entries_path
   end
 
   private
