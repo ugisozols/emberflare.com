@@ -25,6 +25,7 @@ group :production do
   gem "pg"
   gem 'rails_12factor'
   gem "bugsnag"
+  gem "le"
 end
 
 ruby "2.1.1"
