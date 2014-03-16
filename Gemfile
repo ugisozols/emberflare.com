@@ -21,6 +21,17 @@ group :development do
   gem 'sqlite3'
 end
 
+group :development, :test do
+  gem 'rspec-rails', '~> 2.14.1'
+  gem "factory_girl_rails", "~> 4.4.1"
+end
+
+group :test do
+  gem "capybara", "~> 2.2.1"
+  gem "poltergeist", "~> 1.5.0"
+  gem "database_cleaner", "~> 1.2.0"
+end
+
 group :production do
   gem "pg"
   gem 'rails_12factor'
