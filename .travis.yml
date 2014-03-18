@@ -1,4 +1,6 @@
 language: ruby
 bundler_args: --without development
+before_script:
+  - cp config/database.yml.sample config/database.yml
 rvm:
   - 2.1.1
