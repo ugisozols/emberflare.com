@@ -2,7 +2,6 @@ language: ruby
 bundler_args: --without development:production
 before_script:
   - cp config/database.yml.sample config/database.yml
-script:
   - RAILS_ENV=test bundle exec rake db:migrate
 rvm:
   - 2.1.1
