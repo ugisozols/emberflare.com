@@ -18,10 +18,10 @@ gem "thin"
 group :development do
   gem "quiet_assets"
   gem "pry-rails"
-  gem 'sqlite3'
 end
 
 group :development, :test do
+  gem 'sqlite3'
   gem 'rspec-rails', '~> 2.14.1'
   gem "factory_girl_rails", "~> 4.4.1"
 end

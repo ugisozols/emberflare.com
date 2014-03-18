@@ -1,5 +1,5 @@
 language: ruby
-bundler_args: --without development
+bundler_args: --without development:production
 before_script:
   - cp config/database.yml.sample config/database.yml
 rvm:
