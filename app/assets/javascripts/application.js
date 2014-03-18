@@ -11,6 +11,4 @@
 //= require_self
 //= require ember_flare
 
-EmberFlare = Ember.Application.create({
-  LOG_TRANSITIONS: true
-});
+EmberFlare = Ember.Application.create();
