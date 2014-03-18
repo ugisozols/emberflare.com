@@ -196,7 +196,6 @@ DEPENDENCIES
   capybara (~> 2.2.1)
   database_cleaner (~> 1.2.0)
   ember-rails
-  ember-source (= 1.4.0)
   factory_girl_rails (~> 4.4.1)
   font-awesome-rails (~> 4.0.3)
   jquery-rails
