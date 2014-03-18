@@ -1,5 +1,4 @@
 require "spec_helper"
-require "pry"
 
 feature "signing in", :js => true do
   scenario "signing in with valid credentials" do
