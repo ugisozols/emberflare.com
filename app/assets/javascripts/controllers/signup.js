@@ -1,5 +1,6 @@
 EmberFlare.SignupController = Ember.ObjectController.extend({
   signupFailed: false,
+  password: "",
 
   fieldsEmpty: function() {
     return Ember.isEmpty(this.get("username")) ||
@@ -10,11 +11,16 @@ EmberFlare.SignupController = Ember.ObjectController.extend({
   actions: {
     signup: function() {
       var self = this;
-      var model = this.get("model");
+      var data = this.getProperties("username", "email", "password");
 
-      model.save().then(function() {
+      return Ember.$.ajax({
+        url: "/api/users",
+        type: "POST",
+        data: { user: data },
+        dataType: "json",
+      }).then(function() {
         self.transitionToRoute("signin");
-      }, function(response) {
+      }, function() {
         self.set("signupFailed", true);
       });
     },
