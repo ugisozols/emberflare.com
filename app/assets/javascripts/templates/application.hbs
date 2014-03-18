@@ -13,7 +13,7 @@
       <div class="pull-right">
         {{#if session.isAuthenticated}}
           {{#view EmberFlare.SignedinView}}
-            {{session.username}}&nbsp;&nbsp;&nbsp;{{gravatar-image email=session.email}}
+            {{session.username}}&nbsp;&nbsp;&nbsp;{{gravatar-image emailHash=session.gravatar_email_hash}}
 
             {{#link-to "account" id="account" title="Account settings"}}
               <i class="fa fa-cog"></i>
