@@ -1,5 +1,6 @@
 //= require ./store
 //= require_tree ./initializers
+//= require_tree ./serializers
 //= require_tree ./components
 //= require_tree ./models
 //= require_tree ./controllers

@@ -11,14 +11,11 @@ EmberFlare.SignupController = Ember.ObjectController.extend({
   actions: {
     signup: function() {
       var self = this;
-      var data = this.getProperties("username", "email", "password");
+      var model = this.get("model");
 
-      return Ember.$.ajax({
-        url: "/api/users",
-        type: "POST",
-        data: { user: data },
-        dataType: "json",
-      }).then(function() {
+      model.set("password", this.get("password"));
+
+      model.save().then(function() {
         self.transitionToRoute("signin");
       }, function() {
         self.set("signupFailed", true);
