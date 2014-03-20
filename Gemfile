@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rails', '4.1.0.rc1'
 gem 'bcrypt', '~> 3.1.2'
+gem 'sqlite3'
 gem "active_model_serializers"
 
 gem 'sass-rails', '~> 4.0.0'
@@ -20,7 +21,6 @@ group :development do
 end
 
 group :development, :test do
-  gem 'sqlite3'
   gem 'rspec-rails', '~> 2.14.1'
   gem "factory_girl_rails", "~> 4.4.1"
 end
@@ -32,8 +32,6 @@ group :test do
 end
 
 group :production do
-  gem "pg"
-  gem 'rails_12factor'
   gem "bugsnag"
   gem "le"
 end
