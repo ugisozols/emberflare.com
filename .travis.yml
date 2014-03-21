@@ -2,8 +2,7 @@ language: ruby
 bundler_args: --without development:production
 before_script:
   - cp config/database.yml.sample config/database.yml
+  - cp config/secrets.yml.sample config/secrets.yml
   - RAILS_ENV=test bundle exec rake db:migrate
 rvm:
   - 2.1.1
-env:
-  - SECRET_KEY_BASE=a1dab00727f661db2450d0dcd683b5e5d0232b5110d6e159f40c264e5d162d3dfadb2ed6b3541a0910e71936f9347646aad64c432b56797c1851680b2d929392
