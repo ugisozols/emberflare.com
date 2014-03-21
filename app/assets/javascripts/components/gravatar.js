@@ -8,6 +8,6 @@ EmberFlare.GravatarImageComponent = Ember.Component.extend({
     var size = this.get("size"),
         emailHash = this.get("emailHash");
 
-    return "http://www.gravatar.com/avatar/" + emailHash + "?s=" + size;
+    return "https://secure.gravatar.com/avatar/" + emailHash + "?s=" + size;
   }.property("size", "emailHash")
 });
