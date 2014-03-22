@@ -6,6 +6,7 @@ EmberFlare::Application.routes.draw do
   namespace :api do
     resources :entries, :only => [:index, :show, :create]
     resources :users, :only => [:create]
+    resources :account, :only => [:show, :update]
   end
 
   resources :rss, :only => [:index]

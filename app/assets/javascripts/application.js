@@ -4,6 +4,7 @@
 //= require ember
 //= require ember-data
 //= require ember-simple-auth
+//= require ember-validations
 //= require moment.min
 //= require showdown.min
 //= require jquery.tipsy
