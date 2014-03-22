@@ -10,12 +10,12 @@ EmberFlare.SignupRoute = Ember.Route.extend({
   },
 
   deactivate: function() {
-    var model = this.controllerFor("signup").get("model");
+    var model = this.controller.get("model");
     model.rollback();
     if (model.get("isNew")) {
       model.deleteRecord();
     }
 
-    this.controllerFor("signup").set("signupFailed", false);
+    this.controller.set("signupFailed", false);
   },
 });
