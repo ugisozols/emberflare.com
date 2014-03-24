@@ -5,6 +5,10 @@ class Api::EntriesController < ApiController
     respond_with Entry.includes(:user)
   end
 
+  def show
+    respond_with Entry.friendly.find(params[:id])
+  end
+
   def create
     entry = Entry.create(entry_params)
 

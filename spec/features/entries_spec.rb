@@ -34,4 +34,16 @@ feature "entries", :js => true do
       expect(page).to have_content("This is a test content")
     end
   end
+
+  scenario "viewing entry" do
+    entry = FactoryGirl.create(:entry, :title => "Test entry",
+      :content => "Test content")
+
+    visit("/entries")
+
+    click_link "Test entry"
+
+    expect(page).to have_content("Test entry")
+    expect(page).to have_content("Test content")
+  end
 end

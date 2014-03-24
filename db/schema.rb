@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130916085036) do
+ActiveRecord::Schema.define(version: 20140324090316) do
 
   create_table "entries", force: true do |t|
     t.integer  "user_id"
@@ -20,7 +20,10 @@ ActiveRecord::Schema.define(version: 20130916085036) do
     t.text     "content"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "slug"
   end
+
+  add_index "entries", ["slug"], name: "index_entries_on_slug", unique: true
 
   create_table "users", force: true do |t|
     t.string   "username"

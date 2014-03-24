@@ -4,7 +4,7 @@ EmberFlare::Application.routes.draw do
   post "token" => "sessions#create"
 
   namespace :api do
-    resources :entries, :only => [:index, :create]
+    resources :entries, :only => [:index, :show, :create]
     resources :users, :only => [:create]
   end
 
