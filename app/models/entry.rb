@@ -5,4 +5,6 @@ class Entry < ActiveRecord::Base
 
   extend FriendlyId
   friendly_id :title, :use => :slugged
+
+  default_scope { order("id DESC") }
 end
