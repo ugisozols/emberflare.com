@@ -1,5 +1,5 @@
 class Entry < ActiveRecord::Base
-  validates :title, :content, :presence => true
+  validates :title, :body, :presence => true
 
   belongs_to :user
 

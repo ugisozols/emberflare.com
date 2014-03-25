@@ -22,9 +22,9 @@
         </div>
       </div>
       <div class="control-group">
-        <label class="control-label" for="inputContent">Content</label>
+        <label class="control-label" for="inputBody">Body</label>
         <div class="controls">
-          {{textarea value=model.content id="inputContent" placeholder="We only support markdown. Also watch the live preview below as you type"}}
+          {{textarea value=body id="inputBody" placeholder="We only support markdown. Also watch the live preview below as you type"}}
         </div>
       </div>
       <div class="control-group">
@@ -36,8 +36,8 @@
 
     <hr>
 
-    {{#if model.content}}
-      {{format-markdown model.content}}
+    {{#if body}}
+      {{format-markdown body}}
     {{/if}}
 
   {{/if}}

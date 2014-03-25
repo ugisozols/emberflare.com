@@ -9,7 +9,7 @@ feature "entries", :js => true do
 
       fill_in :inputAuthor, :with => "Test author"
       fill_in :inputTitle, :with => "Testing title"
-      fill_in :inputContent, :with => "This is a test content"
+      fill_in :inputBody, :with => "This is a test content"
       click_button "Submit"
 
       expect(page).to have_content("Test author")
@@ -27,7 +27,7 @@ feature "entries", :js => true do
       expect(page).to have_no_selector("input[id=inputAuthor]")
 
       fill_in :inputTitle, :with => "Testing title"
-      fill_in :inputContent, :with => "This is a test content"
+      fill_in :inputBody, :with => "This is a test content"
       click_button "Submit"
 
       expect(page).to have_content("Testing title")
@@ -37,7 +37,7 @@ feature "entries", :js => true do
 
   scenario "viewing entry" do
     entry = FactoryGirl.create(:entry, :title => "Test entry",
-      :content => "Test content")
+      :body => "Test content")
 
     visit("/entries")
 

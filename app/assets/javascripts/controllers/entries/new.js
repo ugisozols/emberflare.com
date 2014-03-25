@@ -4,13 +4,13 @@ EmberFlare.EntriesNewController = Ember.ObjectController.extend({
   fieldsEmpty: function() {
     if (this.get("session").get("isAuthenticated")) {
       return Ember.isEmpty(this.get("title")) ||
-        Ember.isEmpty(this.get("content"));
+        Ember.isEmpty(this.get("body"));
     } else {
       return Ember.isEmpty(this.get("title")) ||
-        Ember.isEmpty(this.get("content")) ||
+        Ember.isEmpty(this.get("body")) ||
         Ember.isEmpty(this.get("authorName"));
     }
-  }.property("title", "content", "authorName"),
+  }.property("title", "body", "authorName"),
 
   actions: {
     createEntry: function() {
