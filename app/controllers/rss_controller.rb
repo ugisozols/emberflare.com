@@ -2,7 +2,7 @@ class RssController < ApplicationController
   respond_to :rss
 
   def index
-    @entries = Entry.order("id DESC")
+    @entries = Entry.all
 
     respond_with @entries
   end
