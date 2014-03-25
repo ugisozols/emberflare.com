@@ -8,7 +8,8 @@ xml.rss :version => "2.0" do
     @entries.each do |entry|
       xml.item do
         xml.title entry.title
-        xml.description markdown_to_regular_url(entry.content)
+        xml.link "#{root_url}entries/#{entry.slug}"
+        xml.description markdown_to_regular_url(entry.body)
         xml.pubDate entry.created_at
       end
     end
