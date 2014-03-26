@@ -79,4 +79,6 @@ EmberFlare::Application.configure do
   config.log_formatter = ::Logger::Formatter.new
 
   config.ember.variant = :production
+
+  config.middleware.use Rack::Prerender, :prerender_token => Rails.application.secrets.prerender_token
 end
