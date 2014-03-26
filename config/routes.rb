@@ -9,6 +9,7 @@ EmberFlare::Application.routes.draw do
   end
 
   resources :rss, :only => [:index]
+  get "/sitemap.xml" => "sitemap#index", :defaults => { :format => "xml" }
 
   get "/*path" => "static#index"
 end
