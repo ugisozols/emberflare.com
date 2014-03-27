@@ -1,4 +1,4 @@
-<div class="row account">
+<div class="row entry">
   <div class="title">{{session.username}}'s account</div>
   <hr>
 
@@ -9,40 +9,45 @@
   {{/if}}
 
   {{#if saveFailed}}
-    <div class="alert alert-error">
+    <div class="alert alert-danger">
       Account failed to update. Please make sure that the data you entered comforms to the rules mentioned below.
     </div>
   {{/if}}
 
-  <div class="span6">
-    <form {{action "updateAccount" on="submit" }} class="form-horizontal">
-      <div class="control-group">
-        <label class="control-label" for="email">Email</label>
-        <div class="controls">
-          {{input type="text" value=email id="email" placeholder="Email"}}
+  <div class="col-md-6">
+    <form {{action "updateAccount" on="submit" }} class="form-horizontal" role="form">
+      
+      <div class="form-group">
+        <label for="email" class="col-sm-3 control-label">Email</label>
+        <div class="col-sm-9">
+          {{view Ember.TextField class="form-control" id='email' value=email placeholder='Email'}}
         </div>
       </div>
-      <div class="control-group">
-        <label class="control-label" for="old_password">Old password</label>
-        <div class="controls">
-          {{input type="password" value=oldPassword id="old_password" placeholder="Old password"}}
+
+      <div class="form-group">
+        <label for="oldPassword" class="col-sm-3 control-label">Old password</label>
+        <div class="col-sm-9">
+          {{input type="password" class="form-control" value=oldPassword id="old_password" placeholder="Old password"}}
         </div>
       </div>
-      <div class="control-group">
-        <label class="control-label" for="new_password">New Password</label>
-        <div class="controls">
-          {{input type="password" value=newPassword id="new_password" placeholder="New password"}}
+
+      <div class="form-group">
+        <label for="newPassword" class="col-sm-3 control-label">New password</label>
+        <div class="col-sm-9">
+          {{input type="password" class="form-control" value=newPassword id="new_password" placeholder="New password"}}
+        </div>
+      </div>   
+      
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+          {{input type="submit" value="Update" class="btn btn-default"}}
         </div>
       </div>
-      <div class="control-group">
-        <div class="controls">
-          {{input type="submit" value="Update" class="btn"}}
-        </div>
-      </div>
+      
     </form>
   </div>
 
-  <div class="span5">
+  <div class="col-md-6">
     <div class="alert alert-info">
       Make sure you follow these rules:
       <br>
