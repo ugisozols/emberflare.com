@@ -7,7 +7,7 @@
 //= require ember-validations
 //= require moment.min
 //= require showdown.min
-//= require jquery.tipsy
+//= require bootstrap
 //= require_self
 //= require ember_flare
 

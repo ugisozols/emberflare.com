@@ -31,7 +31,7 @@
           <ul class="nav navbar-nav navbar-right">
             <li>{{gravatar-image emailHash=session.gravatar_email_hash}}</li>
             <li>{{#link-to "account" id="account" title="Account settings"}}<i class="fa fa-cog"></i>{{/link-to}}</li>
-            <li><a {{ action 'invalidateSession' }} href="" id="signout" title="Sign out"> <i class="fa fa-sign-out"></i></a></li>
+            <li><a {{ action 'invalidateSession' }}  href="" id="signout" title="Sign out"> <i class="fa fa-sign-out"></i></a></li>
           </ul>
           <p class="navbar-text navbar-right nav-username">{{session.username}}</p>
           
