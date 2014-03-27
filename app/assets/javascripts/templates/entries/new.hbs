@@ -6,34 +6,38 @@
   {{#if isAdding}}
     Adding ...
   {{else}}
-    <form {{action "createEntry" on="submit" }} class="form-horizontal">
+    <form {{action "createEntry" on="submit" }} class="form-horizontal" role="form">
+    
       {{#unless session.isAuthenticated}}
-        <div class="control-group">
-          <label class="control-label" for="inputAuthor">Author</label>
-          <div class="controls">
-            {{input type="text" value=authorName id="inputAuthor" placeholder="Author"}}
+        <div class="form-group">
+          <label for="inputAuthor" class="col-sm-2 control-label">Author</label>
+          <div class="col-sm-10">
+            {{input type="text" class="form-control" value=authorName id="inputAuthor" placeholder="Author"}}
           </div>
         </div>
       {{/unless}}
-      <div class="control-group">
-        <label class="control-label" for="inputTitle">Title</label>
-        <div class="controls">
-          {{input type="text" value=title id="inputTitle" placeholder="Title"}}
+      
+      <div class="form-group">
+        <label for="inputTitle" class="col-sm-2 control-label">Title</label>
+        <div class="col-sm-10">
+          {{input type="text" class="form-control" value=title id="inputTitle" placeholder="Title"}}
         </div>
       </div>
-      <div class="control-group">
-        <label class="control-label" for="inputBody">Body</label>
-        <div class="controls">
-          {{textarea value=body id="inputBody" placeholder="We only support markdown. Also watch the live preview below as you type"}}
+
+      <div class="form-group">
+        <label for="inputBody" class="col-sm-2 control-label">Body</label>
+        <div class="col-sm-10">
+          {{textarea class="form-control" value=body id="inputBody" rows="5" placeholder="We only support markdown. Also watch the live preview below as you type"}}
         </div>
       </div>
-      <div class="control-group">
-        <div class="controls">
-          {{input type="submit" value="Submit" disabled=fieldsEmpty class="btn"}}
+      
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          {{input type="submit" value="Submit" disabled=fieldsEmpty class="btn btn-default"}}
         </div>
       </div>
     </form>
-
+    
     <hr>
 
     {{#if body}}

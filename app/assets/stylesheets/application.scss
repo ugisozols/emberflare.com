@@ -2,161 +2,88 @@
 @import "font-awesome";
 @import "tipsy";
 
-body {
+///////////////////////////////////
+//      PAGE
+/////////////////////////////////
+body{
   background-color: #E5E9EC;
-  font-family: 'Open Sans', sans-serif;
-}
-
-#inputBody {
-  width: 95%;
-  height: 100px;
-}
-
-input[type="text"] {
-  &#inputAuthor, &#inputTitle {
-    width: 300px;
+  
+  a{
+    color: #0AA699;
   }
 }
 
-textarea:focus, input[type="text"]:focus, input[type="password"]:focus {
-  border-color: rgba(10,166,153, 0.8);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(10,166,153, 0.6);
-  outline: 0 none;
-}
-
-.title {
-  color: #F35958;
-  font-weight: bold;
-  font-size: 23px;
-  line-height: 30px;
-}
-
-.entry {
-  background-color: #ffffff;
-  padding: 20px;
-  margin-bottom: 30px;
-
-  .span2 {
-    width: 100px;
-
-    .author {
-      margin-top: 7px;
-      text-align: center;
-      font-family: Arial, sans-serif;
-    }
-  }
-  .span10 {
-    width: 740px;
-
-    hr {
-      margin-top: 7px;
-    }
-
-    .title {
-      color: #F35958;
-      font-weight: bold;
-      font-size: 23px;
-      line-height: 30px;
-    }
-
-    .posted-at {
-      margin-top: 5px;
-      color: #8B91A0;
-    }
-
-    .body {
-      font-size: 15px;
-      text-align: justify;
-    }
-  }
-}
-
-.gravatar {
+///////////////////////////////////
+//      MISC
+/////////////////////////////////
+.gravatar{
   border-radius: 50%;
 }
 
-.user-details {
-  min-width: 200px;
-  text-align: right;
 
-  .gravatar {
-    display: inline-block;
-  }
-
-  .h-separate {
-    margin: 0px 10px 0px 8px;
-    border-left: 1px solid #E5E9EC;
-  }
-
-  a, a:hover {
-    text-decoration: none;
-  }
-}
-
-.user-signin {
-  margin: 10px 0;
-
-  a, a:hover {
-    text-decoration: none;
-  }
-}
-
-.signin, .signup, .submit, .account, .about {
-  background-color: #ffffff;
-  padding: 15px 20px 0 20px;
-}
-
-.navbar {
-  margin-bottom: 20px;
-
-  .container {
-    margin-top: 20px;
-  }
-
-  .navbar-inner {
-    min-height: 80px;
-    background: #22262E;
-    color: #fff;
-    font-size: 16px;
-
-    a {
-      color: #fff;
-
-      &:hover {
-        color: #0AA699;
-      }
-    }
-
-    .brand {
-      font-weight: bold;
+///////////////////////////////////
+//      HEADER
+/////////////////////////////////
+.navbar{
+  background-color: #22262E;
+  .container{
+    margin-top: 15px;
+    margin-bottom: 15px;
+    
+    .navbar-brand{
+      font-size: 20px;
       color: #0AA699;
-      padding: 10px 20px 10px 0;
+      font-weight: bold;
     }
-
-    #signout, #account {
-      margin-left: 12px;
-    }
-
-    .nav > li > a {
-      text-shadow: none;
-      // font-size: 15px;
+    
+    li a{
+      font-size: 16px;
       color: #fff;
-
+      
       &:hover {
         color: #0AA699;
       }
     }
-  }
+    
+    .nav-username {
+      color: #fff;
+    }
+    
+    .gravatar{
+      margin: 3px 5px;
+    }
+  } 
 }
 
-.container {
-  a {
-    color: #0AA699;
+
+///////////////////////////////////
+//      PAGES
+/////////////////////////////////
+
+.entry{
+  background-color: #fff;
+  margin-bottom: 25px;
+  padding: 15px;
+  
+  .author{
+    text-align: center;
+    
+    .name{
+      margin-top: 7px;
+    }
   }
-  h4 {
-    margin-bottom: 0;
+
+  .title{
+     color: #F35958;
+     font-weight:bold;
+    font-size: 23px;
+      line-height: 30px;
   }
-  h6 {
-    margin-top: 0;
+    
+  .posted-at{
+    margin-top: 5px;
+    color: #8B91A0;
   }
+  
 }
+

@@ -1,8 +1,19 @@
-<div class="navbar navbar-inverse navbar-static-top">
-  <div class="navbar-inner">
-    <div class="container">
-      {{link-to "EmberFlare" "entries" class="brand"}}
-      <ul class="nav">
+<div class="navbar navbar-default navbar-static-top" role="navigation">
+
+  <div class="container">
+  
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      {{link-to "EmberFlare" "entries" class="navbar-brand"}}
+    </div>
+    
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
         <li>{{link-to "Entries" "entries"}}</li>
         <li>{{link-to "Submit" "entries.new"}}</li>
         <li>{{link-to "About" "about"}}</li>
@@ -13,29 +24,26 @@
           <a href="https://twitter.com/emberflare_com" target="blank">@emberflare_com</a>
         </li>
       </ul>
-      <div class="pull-right">
-        {{#if session.isAuthenticated}}
-          {{#view EmberFlare.SignedinView}}
-            {{session.username}}&nbsp;&nbsp;&nbsp;{{gravatar-image emailHash=session.gravatar_email_hash}}
-
-            {{#link-to "account" id="account" title="Account settings"}}
-              <i class="fa fa-cog"></i>
-            {{/link-to}}
-
-            <a {{ action 'invalidateSession' }} href="" id="signout" title="Sign out">
-              <i class="fa fa-sign-out"></i>
-            </a>
-          {{/view}}
-        {{else}}
-          <div class="user-signin">
-            {{link-to "Sign in" "signin"}} | {{link-to "Sign up" "signup"}}
-          </div>
-        {{/if}}
-      </div>
+      
+       {{#if session.isAuthenticated}} 
+        {{#view EmberFlare.SignedinView}} 
+          
+          <ul class="nav navbar-nav navbar-right">
+            <li>{{gravatar-image emailHash=session.gravatar_email_hash}}</li>
+            <li>{{#link-to "account" id="account" title="Account settings"}}<i class="fa fa-cog"></i>{{/link-to}}</li>
+            <li><a {{ action 'invalidateSession' }} href="" id="signout" title="Sign out"> <i class="fa fa-sign-out"></i></a></li>
+          </ul>
+          <p class="navbar-text navbar-right nav-username">{{session.username}}</p>
+          
+        {{/view}} 
+      {{else}}
+        <ul class="nav navbar-nav navbar-right">
+          <li>{{link-to "Sign in" "signin"}}</li> 
+          <li>{{link-to "Sign up" "signup"}}</li>
+        </ul>
+      {{/if}}     
     </div>
   </div>
 </div>
 
-<div class="container">
-  {{outlet}}
-</div>
+<div class="container">{{outlet}}</div>

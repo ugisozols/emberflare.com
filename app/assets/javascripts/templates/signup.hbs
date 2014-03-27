@@ -1,44 +1,48 @@
-<div class="row signup">
+<div class="row entry">
 
   <div class="title">Sign up</div>
   <hr>
 
   {{#if signupFailed}}
-    <div class="alert alert-error">
+    <div class="alert alert-danger">
       <button {{ action "clearWarning" }}type="button" class="close">&times;</button>
-      Signup failed! Please double check that the values you provided meet the requirements mentioned below.
+      <strong>Signup failed!</strong> Please double check that the values you provided meet the requirements mentioned below.
     </div>
   {{/if}}
 
-  <div class="span6">
-    <form {{action 'signup' on='submit'}} class="form-horizontal">
-      <div class="control-group">
-        <label class="control-label" for="username">Username</label>
-        <div class="controls">
-          {{view Ember.TextField id='username' value=username placeholder='Username'}}
+  <div class="col-md-6">
+    <form {{action 'signup' on='submit'}} class="form-horizontal" role="form">
+    
+      <div class="form-group">
+        <label for="username" class="col-sm-2 control-label">Username</label>
+        <div class="col-sm-10">
+          {{view Ember.TextField class="form-control" id='username' value=username placeholder='Username'}}
         </div>
       </div>
-      <div class="control-group">
-        <label class="control-label" for="email">Email</label>
-        <div class="controls">
-          {{view Ember.TextField id='email' value=email placeholder='Email'}}
+      
+      <div class="form-group">
+        <label for="email" class="col-sm-2 control-label">Email</label>
+        <div class="col-sm-10">
+          {{view Ember.TextField class="form-control" id='email' value=email placeholder='Email'}}
         </div>
       </div>
-      <div class="control-group">
-        <label class="control-label" for="password">Password</label>
-        <div class="controls">
-          {{view Ember.TextField id='password' type='password' value=password placeholder='Password'}}
+      
+      <div class="form-group">
+        <label for="password" class="col-sm-2 control-label">Password</label>
+        <div class="col-sm-10">
+          {{view Ember.TextField class="form-control" id='password' type='password' value=password placeholder='Password'}}
         </div>
       </div>
-      <div class="control-group">
-        <div class="controls">
-          {{input type="submit" value="Sign up" disabled=fieldsEmpty class="btn"}}
+      
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          {{input type="submit" value="Sign up" disabled=fieldsEmpty class="btn btn-default"}}
         </div>
       </div>
     </form>
   </div>
 
-  <div class="span5">
+  <div class="col-md-6">
     <div class="alert alert-info">
       A couple of things you should know:
       <br>

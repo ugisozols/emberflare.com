@@ -1,11 +1,11 @@
 {{#each}}
   <div class="row entry">
-    <div class="span2">
+    <div class="col-md-2 author">
       {{gravatar-image emailHash=authorGravatarEmailHash size="90"}}
-      <div class="author">{{authorName}}</div>
+      <div class="name">{{authorName}}</div>
     </div>
 
-    <div class="span10">
+    <div class="col-md-10 post">
       <div>
         {{link-to title "entries.show" this class="title"}}
       </div>
