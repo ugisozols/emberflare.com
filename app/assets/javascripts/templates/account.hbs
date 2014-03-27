@@ -16,34 +16,29 @@
 
   <div class="col-md-6">
     <form {{action "updateAccount" on="submit" }} class="form-horizontal" role="form">
-      
       <div class="form-group">
         <label for="email" class="col-sm-3 control-label">Email</label>
         <div class="col-sm-9">
           {{view Ember.TextField class="form-control" id='email' value=email placeholder='Email'}}
         </div>
       </div>
-
       <div class="form-group">
         <label for="oldPassword" class="col-sm-3 control-label">Old password</label>
         <div class="col-sm-9">
           {{input type="password" class="form-control" value=oldPassword id="old_password" placeholder="Old password"}}
         </div>
       </div>
-
       <div class="form-group">
         <label for="newPassword" class="col-sm-3 control-label">New password</label>
         <div class="col-sm-9">
           {{input type="password" class="form-control" value=newPassword id="new_password" placeholder="New password"}}
         </div>
       </div>   
-      
       <div class="form-group">
         <div class="col-sm-offset-3 col-sm-9">
           {{input type="submit" value="Update" class="btn btn-default"}}
         </div>
       </div>
-      
     </form>
   </div>
 
