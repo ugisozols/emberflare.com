@@ -1,6 +1,56 @@
 <div class="row account">
-  <div class="title">My account</div>
+  <div class="title">{{session.username}}'s account</div>
   <hr>
 
-  <p>under construction ...</p>
+  {{#if saveSucceeded}}
+    <div class="alert alert-success">
+      Account was updated successfuly.
+    </div>
+  {{/if}}
+
+  {{#if saveFailed}}
+    <div class="alert alert-error">
+      Account failed to update. Please make sure that the data you entered comforms to the rules mentioned below.
+    </div>
+  {{/if}}
+
+  <div class="span6">
+    <form {{action "updateAccount" on="submit" }} class="form-horizontal">
+      <div class="control-group">
+        <label class="control-label" for="email">Email</label>
+        <div class="controls">
+          {{input type="text" value=email id="email" placeholder="Email"}}
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="old_password">Old password</label>
+        <div class="controls">
+          {{input type="password" value=oldPassword id="old_password" placeholder="Old password"}}
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="new_password">New Password</label>
+        <div class="controls">
+          {{input type="password" value=newPassword id="new_password" placeholder="New password"}}
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          {{input type="submit" value="Update" class="btn"}}
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="span5">
+    <div class="alert alert-info">
+      Make sure you follow these rules:
+      <br>
+      <br>
+      <ul>
+        <li>Email - a valid one (used for avatars)</li>
+        <li>Password - min: 6, max: 50</li>
+      </ul>
+    </div>
+  </div>
 </div>
