@@ -8,6 +8,9 @@ EmberFlare.Router.map(function() {
     this.route("show", { path: "/:slug" });
     this.route("new");
   });
+
+  this.route("error404");
+  this.route("missing", { path: "/*path" });
 });
 
 EmberFlare.Router.reopen({
