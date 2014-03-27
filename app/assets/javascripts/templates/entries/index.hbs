@@ -1,16 +1,17 @@
 {{#each}}
   <div class="row entry">
-    <div class="span2">
+    <div class="col-sm-2 col-md-2 author hidden-xs">
       {{gravatar-image emailHash=authorGravatarEmailHash size="90"}}
-      <div class="author">{{authorName}}</div>
+      <div class="name">{{authorName}}</div>
     </div>
 
-    <div class="span10">
+    <div class="col-sm-10 col-md-10 post">
       <div>
-        {{link-to title "entries.show" this class="title"}}
+        <span class="xs-gravatar visible-xs">{{gravatar-image emailHash=authorGravatarEmailHash}}</span>
+        {{link-to title "entries.show" this class="title"}} <span class="visible-xs">by {{authorName}}</span>
       </div>
       <div class="posted-at">
-        <i class="fa fa-clock-o"></i> {{format-date createdAt}}
+        <i class="fa fa-clock-o"></i> {{format-date createdAt}} 
       </div>
       <hr>
 
