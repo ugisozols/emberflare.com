@@ -9,7 +9,7 @@ xml.rss :version => "2.0" do
       xml.item do
         xml.title entry.title
         xml.link "#{root_url}entries/#{entry.slug}"
-        xml.description markdown_to_regular_url(entry.body)
+        xml.description markdown_to_html(entry.body)
         xml.pubDate entry.created_at
       end
     end

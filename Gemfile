@@ -6,6 +6,7 @@ gem 'sqlite3'
 gem "active_model_serializers"
 gem "friendly_id", "~> 5.0.3"
 gem "prerender_rails"
+gem "redcarpet", "~> 3.1.1"
 
 gem 'sass-rails', '~> 4.0.2'
 gem 'uglifier', '>= 1.3.0'
