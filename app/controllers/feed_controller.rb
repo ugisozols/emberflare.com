@@ -1,4 +1,4 @@
-class RssController < ApplicationController
+class FeedController < ApplicationController
   respond_to :rss
 
   def index

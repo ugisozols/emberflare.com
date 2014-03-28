@@ -9,7 +9,7 @@
   <%= javascript_include_tag "application" %>
   <link href='//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700&subset=cyrillic-ext,greek-ext' rel='stylesheet' type='text/css'>
   <%= csrf_meta_tags %>
-  <%= auto_discovery_link_tag(:rss, rss_index_url(:rss)) %>
+  <%= auto_discovery_link_tag(:rss, feed_index_url(:rss)) %>
 </head>
 <body>
   <%= yield %>

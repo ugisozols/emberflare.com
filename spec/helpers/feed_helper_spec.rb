@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe RssHelper do
+describe FeedHelper do
   describe "markdown_to_html" do
     it "converts markdown to html" do
       text = "**markdown** with [url](www.example.com)"
