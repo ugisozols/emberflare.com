@@ -3,7 +3,6 @@ source 'https://rubygems.org'
 gem 'rails', '4.1.0.rc2'
 gem 'bcrypt', '~> 3.1.2'
 gem 'sqlite3'
-gem "active_model_serializers"
 gem "friendly_id", "~> 5.0.3"
 gem "prerender_rails"
 gem "redcarpet", "~> 3.1.1"
