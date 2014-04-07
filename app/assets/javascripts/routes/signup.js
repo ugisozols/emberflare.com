@@ -18,4 +18,11 @@ EmberFlare.SignupRoute = Ember.Route.extend({
 
     this.controller.set("signupFailed", false);
   },
+
+  actions: {
+    updateTitle: function(tokens) {
+      tokens.push("Sign up");
+      return true;
+    }
+  }
 });

@@ -6,4 +6,11 @@ EmberFlare.AccountRoute = Ember.Route.extend(Ember.SimpleAuth.AuthenticatedRoute
   deactivate: function() {
     this.controller.setProperties({"saveSucceeded": false, "saveFailed": false});
   },
+
+  actions: {
+    updateTitle: function(tokens) {
+      tokens.push("Account");
+      return true;
+    }
+  }
 });

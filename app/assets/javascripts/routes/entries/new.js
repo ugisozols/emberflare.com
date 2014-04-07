@@ -9,5 +9,12 @@ EmberFlare.EntriesNewRoute = Ember.Route.extend({
     if (model.get("isNew")) {
       model.deleteRecord();
     }
+  },
+
+  actions: {
+    updateTitle: function(tokens) {
+      tokens.push("Submit entry");
+      return true;
+    }
   }
 });

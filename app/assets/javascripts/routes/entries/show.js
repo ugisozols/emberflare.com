@@ -8,5 +8,13 @@ EmberFlare.EntriesShowRoute = Ember.Route.extend({
         return self.transitionTo("error404");
       }
     );
+  },
+
+  actions: {
+    updateTitle: function(tokens) {
+      var title = this.get("currentModel.title");
+      tokens.push(title);
+      return true;
+    }.observes("currentModel.title")
   }
 });

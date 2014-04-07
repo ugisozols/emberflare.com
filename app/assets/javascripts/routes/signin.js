@@ -12,6 +12,11 @@ EmberFlare.SigninRoute = Ember.Route.extend({
   actions: {
     sessionAuthenticationFailed: function() {
       this.controller.set("signinFailed", true);
+    },
+
+    updateTitle: function(tokens) {
+      tokens.push("Sign in");
+      return true;
     }
   }
 });

@@ -21,5 +21,9 @@ EmberFlare.Router.reopen({
         'page': this.get('url'),
         'title': this.get('url')
       });
+  }.on('didTransition'),
+
+  updateTitle: function() {
+    this.send('updateTitle', []);
   }.on('didTransition')
 });
