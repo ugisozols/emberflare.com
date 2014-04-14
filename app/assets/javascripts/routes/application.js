@@ -4,7 +4,7 @@ EmberFlare.ApplicationRoute = Ember.Route.extend(Ember.SimpleAuth.ApplicationRou
       if (tokens.length) {
         document.title = tokens.join(' - ') + " - EmberFlare";
       } else {
-        document.title = "EmberFlare";
+        document.title = "EmberFlare - Community driven place for all things Ember.js";
       }
     }
   }
