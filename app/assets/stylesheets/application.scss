@@ -31,6 +31,13 @@ textarea:focus, input[type="text"]:focus, input[type="password"]:focus {
   line-height: 30px;
 }
 
+.preview-area {
+  margin: 20px;
+  .info-message {
+    text-align: center;
+  }
+}
+
 .entry {
   background-color: #ffffff;
   padding: 20px;

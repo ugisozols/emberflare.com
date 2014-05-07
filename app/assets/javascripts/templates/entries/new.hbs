@@ -6,6 +6,15 @@
   {{#if isAdding}}
     Adding ...
   {{else}}
+    <div class="alert alert-info">
+      Tips before you hit <strong>Submit</strong>:
+      <br><br>
+      <ul>
+        <li>We support markdown so use that to format your entry</li>
+        <li>Use the live preview area below to make sure all of the formatting and links are working correctly</li>
+      </ul>
+    </div>
+
     <form {{action "createEntry" on="submit" }} class="form-horizontal">
       {{#unless session.isAuthenticated}}
         <div class="control-group">
@@ -22,23 +31,31 @@
         </div>
       </div>
       <div class="control-group">
-        <label class="control-label" for="inputBody">Body</label>
+        <label class="control-label" for="inputBody">Content</label>
         <div class="controls">
-          {{textarea value=body id="inputBody" placeholder="We only support markdown. Also watch the live preview below as you type"}}
+          {{textarea value=body id="inputBody" placeholder="Content"}}
         </div>
       </div>
       <div class="control-group">
         <div class="controls">
           {{input type="submit" value="Submit" disabled=fieldsEmpty class="btn"}}
+          or
+          {{link-to "Cancel" "entries"}}
         </div>
       </div>
     </form>
 
     <hr>
 
-    {{#if body}}
-      {{format-markdown body}}
-    {{/if}}
+    <div class="preview-area">
+      {{#if body}}
+        {{format-markdown body}}
+      {{else}}
+        <div class="info-message">
+          Live preview area. Enter some text in the textarea above and watch me change
+        </div>
+      {{/if}}
+    </div>
 
   {{/if}}
 </div>
