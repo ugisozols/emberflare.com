@@ -21,7 +21,7 @@ feature "entries", :js => true do
   context "when signed in" do
     before { sign_in }
 
-    xscenario "adding entry" do
+    scenario "adding entry" do
       click_link "Submit"
 
       expect(page).to have_no_selector("input[id=inputAuthor]")
