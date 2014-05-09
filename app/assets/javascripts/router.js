@@ -5,7 +5,7 @@ EmberFlare.Router.map(function() {
   this.resource("account");
 
   this.resource('entries', function() {
-    this.route("show", { path: "/:slug" });
+    this.route("show", { path: "/:entry_id" });
     this.route("new");
   });
 

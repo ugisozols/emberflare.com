@@ -1,6 +1,10 @@
 class EntrySerializer < ActiveModel::Serializer
-  attributes :id, :slug, :title, :body, :author_name, :author_gravatar_email_hash,
+  attributes :id, :title, :body, :author_name, :author_gravatar_email_hash,
              :created_at
+
+  def id
+    object.slug
+  end
 
   def author_name
     user ? user.username : object.author_name
