@@ -6,6 +6,7 @@ gem 'sqlite3'
 gem "friendly_id", "~> 5.0.3"
 gem "prerender_rails"
 gem "redcarpet", "~> 3.1.1"
+gem "rack-cors", require: "rack/cors"
 
 gem 'sass-rails', '~> 4.0.2'
 gem 'uglifier', '>= 1.3.0'
