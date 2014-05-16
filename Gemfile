@@ -38,5 +38,3 @@ group :production do
   gem "bugsnag"
   gem "le"
 end
-
-ruby "2.1.1"
