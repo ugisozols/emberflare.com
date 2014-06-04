@@ -79,11 +79,8 @@ define("ember-simple-auth-cookie-store/stores/cookie",
       stores data but instead of cookies relies on the `localStorage` API and does
       not need to poll for external changes.
 
-      This store will trigger the `'updated'` event when any of its cookies is
-      changed from another tab or window.
-
-      _The factory for this store is registered as `'session-store:cookie'` in
-      Ember's container.
+      _The factory for this store is registered as
+      `'ember-simple-auth-session-store:cookie'` in Ember's container._
 
       @class Cookie
       @namespace Stores
@@ -206,7 +203,7 @@ define("ember-simple-auth-cookie-store/stores/cookie",
         var data = this.restore();
         if (!Ember.SimpleAuth.Utils.flatObjectsAreEqual(data, this._lastData)) {
           this._lastData = data;
-          this.trigger('updated', data);
+          this.trigger('sessionDataUpdated', data);
         }
         if (!Ember.testing) {
           Ember.run.cancel(this._syncDataTimeout);
@@ -220,6 +217,6 @@ define("ember-simple-auth-cookie-store/stores/cookie",
 global.Ember.SimpleAuth.Stores.Cookie = requireModule('ember-simple-auth-cookie-store').default;
 
 global.Ember.SimpleAuth.initializeExtension(function(container, application, options) {
-  container.register('session-store:cookie', global.Ember.SimpleAuth.Stores.Cookie);
+  container.register('ember-simple-auth-session-store:cookie', global.Ember.SimpleAuth.Stores.Cookie);
 });
 })((typeof global !== 'undefined') ? global : window);

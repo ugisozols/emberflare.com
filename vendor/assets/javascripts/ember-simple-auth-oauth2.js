@@ -76,17 +76,26 @@ define("ember-simple-auth-oauth2/authenticators/oauth2",
       ([RFC 6749](http://tools.ietf.org/html/rfc6749)), specifically the _"Resource
       Owner Password Credentials Grant Type"_.
 
-      This authenticator supports refreshing the access token automatically and
-      will trigger the `'updated'` event each time the token was refreshed.
+      This authenticator supports access token refresh (see
+      [RFC 6740, section 6](http://tools.ietf.org/html/rfc6749#section-6)).
 
       _The factory for this authenticator is registered as
-      `'authenticator:oauth2-password-grant'` in Ember's container._
+      `'ember-simple-auth-authenticator:oauth2-password-grant'` in Ember's
+      container._
 
       @class OAuth2
       @namespace Authenticators
       @extends Base
     */
     var OAuth2 = Ember.SimpleAuth.Authenticators.Base.extend({
+      /**
+        Triggered when the authenticator refreshes the access token (see
+        [RFC 6740, section 6](http://tools.ietf.org/html/rfc6749#section-6)).
+
+        @event updated
+        @param {Object} data The updated session data
+      */
+
       /**
         The endpoint on the server the authenticator acquires the access token
         from.
@@ -241,7 +250,9 @@ define("ember-simple-auth-oauth2/authenticators/oauth2",
           if (!Ember.isEmpty(refreshToken) && !Ember.isEmpty(expiresAt) && expiresAt > now - offset) {
             Ember.run.cancel(this._refreshTokenTimeout);
             delete this._refreshTokenTimeout;
-            this._refreshTokenTimeout = Ember.run.later(this, this.refreshAccessToken, expiresIn, refreshToken, expiresAt - now - offset);
+            if (!Ember.testing) {
+              this._refreshTokenTimeout = Ember.run.later(this, this.refreshAccessToken, expiresIn, refreshToken, expiresAt - now - offset);
+            }
           }
         }
       },
@@ -261,7 +272,7 @@ define("ember-simple-auth-oauth2/authenticators/oauth2",
               var expiresAt = _this.absolutizeExpirationTime(expiresIn);
               var data      = Ember.$.extend(response, { expires_in: expiresIn, expires_at: expiresAt, refresh_token: refreshToken });
               _this.scheduleAccessTokenRefresh(expiresIn, null, refreshToken);
-              _this.trigger('updated', data);
+              _this.trigger('sessionDataUpdated', data);
               resolve(data);
             });
           }, function(xhr, status, error) {
@@ -298,7 +309,7 @@ define("ember-simple-auth-oauth2/authorizers/oauth2",
       `Authorization` header.
 
       _The factory for this authorizer is registered as
-      `'authorizer:oauth2-bearer'` in Ember's container._
+      `'ember-simple-auth-authorizer:oauth2-bearer'` in Ember's container._
 
       @class OAuth2
       @namespace Authorizers
@@ -336,7 +347,7 @@ global.Ember.SimpleAuth.Authenticators.OAuth2 = oauth2.Authenticator;
 global.Ember.SimpleAuth.Authorizers.OAuth2    = oauth2.Authorizer;
 
 global.Ember.SimpleAuth.initializeExtension(function(container, application, options) {
-  container.register('authorizer:oauth2-bearer', global.Ember.SimpleAuth.Authorizers.OAuth2);
-  container.register('authenticator:oauth2-password-grant', global.Ember.SimpleAuth.Authenticators.OAuth2);
+  container.register('ember-simple-auth-authorizer:oauth2-bearer', global.Ember.SimpleAuth.Authorizers.OAuth2);
+  container.register('ember-simple-auth-authenticator:oauth2-password-grant', global.Ember.SimpleAuth.Authenticators.OAuth2);
 });
 })((typeof global !== 'undefined') ? global : window);
