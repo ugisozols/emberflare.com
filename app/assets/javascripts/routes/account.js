@@ -1,4 +1,4 @@
-EmberFlare.AccountRoute = Ember.Route.extend({
+EmberFlare.AccountRoute = Ember.Route.extend(Ember.SimpleAuth.AuthenticatedRouteMixin, {
   model: function() {
     return this.store.find("account", "current_user");
   },
