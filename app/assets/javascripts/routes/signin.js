@@ -10,7 +10,7 @@ EmberFlare.SigninRoute = Ember.Route.extend({
   },
 
   actions: {
-    authorizationFailed: function() {
+    sessionAuthenticationFailed: function() {
       this.controller.set("signinFailed", true);
     },
 

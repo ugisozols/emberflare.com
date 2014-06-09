@@ -558,7 +558,7 @@ define("ember-simple-auth/mixins/application_route_mixin",
           'sessionInvalidationFailed',
           'authorizationFailed'
         ]).forEach(function(event) {
-          _this.get('session').on(event, function(error) {
+          _this.get(Configuration.sessionPropertyName).on(event, function(error) {
             Array.prototype.unshift.call(arguments, event);
             _this.send.apply(_this, arguments);
           });
@@ -685,7 +685,9 @@ define("ember-simple-auth/mixins/application_route_mixin",
           @method actions.authorizationFailed
         */
         authorizationFailed: function() {
-          this.get(Configuration.sessionPropertyName).invalidate();
+          if (this.get(Configuration.sessionPropertyName).get('isAuthenticated')) {
+            this.get(Configuration.sessionPropertyName).invalidate();
+          }
         }
       }
     });
