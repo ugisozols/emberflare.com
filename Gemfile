@@ -9,6 +9,7 @@ gem "redcarpet", "~> 3.1.1"
 gem "rack-cors", require: "rack/cors"
 
 gem 'sass-rails', '~> 4.0.3'
+gem 'coffee-rails', '~> 4.0.1'
 gem 'uglifier', '>= 1.3.0'
 gem "bootstrap-sass", "~> 2.3.2.2"
 gem "font-awesome-rails", "~> 4.0.3"
