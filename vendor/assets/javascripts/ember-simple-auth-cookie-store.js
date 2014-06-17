@@ -54,18 +54,13 @@ var define, requireModule;
   requireModule.registry = registry;
 })();
 
-define("ember-simple-auth-cookie-store", 
-  ["./ember-simple-auth-cookie-store/stores/cookie","exports"],
-  function(__dependency1__, __exports__) {
-    "use strict";
-    var Cookie = __dependency1__.Cookie;
-
-    __exports__["default"] = Cookie;
-  });
 define("ember-simple-auth-cookie-store/stores/cookie", 
-  ["exports"],
-  function(__exports__) {
+  ["ember-simple-auth/stores/base","ember-simple-auth/utils/flat_objects_are_equal","exports"],
+  function(__dependency1__, __dependency2__, __exports__) {
     "use strict";
+    var Base = __dependency1__["default"];
+    var flatObjectsAreEqual = __dependency2__["default"];
+
     var global = (typeof window !== 'undefined') ? window : {},
         Ember = global.Ember;
 
@@ -86,7 +81,7 @@ define("ember-simple-auth-cookie-store/stores/cookie",
       @namespace Stores
       @extends Stores.Base
     */
-    var Cookie = Ember.SimpleAuth.Stores.Base.extend({
+    __exports__["default"] = Base.extend({
       /**
         The prefix to use for the store's cookie names so they can be distinguished
         from other cookies.
@@ -201,7 +196,7 @@ define("ember-simple-auth-cookie-store/stores/cookie",
       */
       syncData: function() {
         var data = this.restore();
-        if (!Ember.SimpleAuth.Utils.flatObjectsAreEqual(data, this._lastData)) {
+        if (!flatObjectsAreEqual(data, this._lastData)) {
           this._lastData = data;
           this.trigger('sessionDataUpdated', data);
         }
@@ -211,10 +206,16 @@ define("ember-simple-auth-cookie-store/stores/cookie",
         }
       }
     });
-
-    __exports__.Cookie = Cookie;
   });
-global.Ember.SimpleAuth.Stores.Cookie = requireModule('ember-simple-auth-cookie-store').default;
+define('ember-simple-auth/stores/base',  ['exports'], function(__exports__) {
+  __exports__['default'] = global.Ember.SimpleAuth.Stores.Base;
+});
+define('ember-simple-auth/utils/flat_objects_are_equal',  ['exports'], function(__exports__) {
+  __exports__['default'] = global.Ember.SimpleAuth.Utils.flatObjectsAreEqual;
+});
+
+var Cookie = requireModule('ember-simple-auth-cookie-store/stores/cookie').default;
+global.Ember.SimpleAuth.Stores.Cookie = Cookie;
 
 global.Ember.SimpleAuth.initializeExtension(function(container, application, options) {
   container.register('ember-simple-auth-session-store:cookie', global.Ember.SimpleAuth.Stores.Cookie);

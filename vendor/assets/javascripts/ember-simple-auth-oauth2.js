@@ -54,20 +54,13 @@ var define, requireModule;
   requireModule.registry = registry;
 })();
 
-define("ember-simple-auth-oauth2", 
-  ["./ember-simple-auth-oauth2/authenticators/oauth2","./ember-simple-auth-oauth2/authorizers/oauth2","exports"],
+define("ember-simple-auth-oauth2/authenticators/oauth2", 
+  ["ember-simple-auth/authenticators/base","ember-simple-auth/utils/is_secure_url","exports"],
   function(__dependency1__, __dependency2__, __exports__) {
     "use strict";
-    var Authenticator = __dependency1__.OAuth2;
-    var Authorizer = __dependency2__.OAuth2;
+    var Base = __dependency1__["default"];
+    var isSecureUrl = __dependency2__["default"];
 
-    __exports__.Authenticator = Authenticator;
-    __exports__.Authorizer = Authorizer;
-  });
-define("ember-simple-auth-oauth2/authenticators/oauth2", 
-  ["exports"],
-  function(__exports__) {
-    "use strict";
     var global = (typeof window !== 'undefined') ? window : {},
         Ember = global.Ember;
 
@@ -87,7 +80,7 @@ define("ember-simple-auth-oauth2/authenticators/oauth2",
       @namespace Authenticators
       @extends Base
     */
-    var OAuth2 = Ember.SimpleAuth.Authenticators.Base.extend({
+    __exports__["default"] = Base.extend({
       /**
         Triggered when the authenticator refreshes the access token (see
         [RFC 6740, section 6](http://tools.ietf.org/html/rfc6749#section-6)).
@@ -223,7 +216,7 @@ define("ember-simple-auth-oauth2/authenticators/oauth2",
         @protected
       */
       makeRequest: function(data) {
-        if (!Ember.SimpleAuth.Utils.isSecureUrl(this.serverTokenEndpoint)) {
+        if (!isSecureUrl(this.serverTokenEndpoint)) {
           Ember.Logger.warn('Credentials are transmitted via an insecure connection - use HTTPS to keep them secure.');
         }
         return Ember.$.ajax({
@@ -292,13 +285,14 @@ define("ember-simple-auth-oauth2/authenticators/oauth2",
         }
       }
     });
-
-    __exports__.OAuth2 = OAuth2;
   });
 define("ember-simple-auth-oauth2/authorizers/oauth2", 
-  ["exports"],
-  function(__exports__) {
+  ["ember-simple-auth/authorizers/base","ember-simple-auth/utils/is_secure_url","exports"],
+  function(__dependency1__, __dependency2__, __exports__) {
     "use strict";
+    var Base = __dependency1__["default"];
+    var isSecureUrl = __dependency2__["default"];
+
     var global = (typeof window !== 'undefined') ? window : {},
         Ember = global.Ember;
 
@@ -315,7 +309,7 @@ define("ember-simple-auth-oauth2/authorizers/oauth2",
       @namespace Authorizers
       @extends Base
     */
-    var OAuth2 = Ember.SimpleAuth.Authorizers.Base.extend({
+    __exports__["default"] = Base.extend({
       /**
         Authorizes an XHR request by sending the `access_token` property from the
         session as a bearer token in the `Authorization` header:
@@ -331,20 +325,29 @@ define("ember-simple-auth-oauth2/authorizers/oauth2",
       authorize: function(jqXHR, requestOptions) {
         var accessToken = this.get('session.access_token');
         if (this.get('session.isAuthenticated') && !Ember.isEmpty(accessToken)) {
-          if (!Ember.SimpleAuth.Utils.isSecureUrl(requestOptions.url)) {
+          if (!isSecureUrl(requestOptions.url)) {
             Ember.Logger.warn('Credentials are transmitted via an insecure connection - use HTTPS to keep them secure.');
           }
           jqXHR.setRequestHeader('Authorization', 'Bearer ' + accessToken);
         }
       }
     });
-
-    __exports__.OAuth2 = OAuth2;
   });
-var oauth2 = requireModule('ember-simple-auth-oauth2');
+define('ember-simple-auth/authenticators/base',  ['exports'], function(__exports__) {
+  __exports__['default'] = global.Ember.SimpleAuth.Authenticators.Base;
+});
+define('ember-simple-auth/authorizers/base',  ['exports'], function(__exports__) {
+  __exports__['default'] = global.Ember.SimpleAuth.Authorizers.Base;
+});
+define('ember-simple-auth/utils/is_secure_url',  ['exports'], function(__exports__) {
+  __exports__['default'] = global.Ember.SimpleAuth.Utils.isSecureUrl;
+});
 
-global.Ember.SimpleAuth.Authenticators.OAuth2 = oauth2.Authenticator;
-global.Ember.SimpleAuth.Authorizers.OAuth2    = oauth2.Authorizer;
+var Authenticator = requireModule('ember-simple-auth-oauth2/authenticators/oauth2').default;
+var Authorizer = requireModule('ember-simple-auth-oauth2/authorizers/oauth2').default;
+
+global.Ember.SimpleAuth.Authenticators.OAuth2 = Authenticator;
+global.Ember.SimpleAuth.Authorizers.OAuth2    = Authorizer;
 
 global.Ember.SimpleAuth.initializeExtension(function(container, application, options) {
   container.register('ember-simple-auth-authorizer:oauth2-bearer', global.Ember.SimpleAuth.Authorizers.OAuth2);
