@@ -1,5 +1,5 @@
-EmberFlare.SigninController = Ember.Controller.extend(Ember.SimpleAuth.LoginControllerMixin, {
-  authenticatorFactory: "ember-simple-auth-authenticator:oauth2-password-grant",
+EmberFlare.SigninController = Ember.Controller.extend(SimpleAuth.LoginControllerMixin, {
+  authenticator: "simple-auth-authenticator:oauth2-password-grant",
 
   signinFailed: false,
 
