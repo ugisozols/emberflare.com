@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.1.2'
+gem 'rails', '4.1.4'
 gem 'bcrypt', '~> 3.1.2'
 gem 'sqlite3'
 gem "friendly_id", "~> 5.0.3"
