@@ -1,5 +1,7 @@
 (function(global) {
 
+Ember.libraries.register('Ember Simple Auth OAuth 2.0', '0.6.6');
+
 var define, requireModule;
 
 (function() {
@@ -62,9 +64,6 @@ define("simple-auth-oauth2/authenticators/oauth2",
     var isSecureUrl = __dependency2__["default"];
     var getGlobalConfig = __dependency3__["default"];
 
-    var global = (typeof window !== 'undefined') ? window : {},
-        Ember = global.Ember;
-
     /**
       Authenticator that conforms to OAuth 2
       ([RFC 6749](http://tools.ietf.org/html/rfc6749)), specifically the _"Resource
@@ -119,15 +118,15 @@ define("simple-auth-oauth2/authenticators/oauth2",
         ```js
         window.ENV = window.ENV || {};
         window.ENV['simple-auth-oauth2'] = {
-          serverTokenRevokationEndpoint: '/some/custom/endpoint'
+          serverTokenRevocationEndpoint: '/some/custom/endpoint'
         }
         ```
 
-        @property serverTokenRevokationEndpoint
+        @property serverTokenRevocationEndpoint
         @type String
         @default null
       */
-      serverTokenRevokationEndpoint: null,
+      serverTokenRevocationEndpoint: null,
 
       /**
         Sets whether the authenticator automatically refreshes access tokens.
@@ -160,7 +159,7 @@ define("simple-auth-oauth2/authenticators/oauth2",
       init: function() {
         var globalConfig                   = getGlobalConfig('simple-auth-oauth2');
         this.serverTokenEndpoint           = globalConfig.serverTokenEndpoint || this.serverTokenEndpoint;
-        this.serverTokenRevokationEndpoint = globalConfig.serverTokenRevokationEndpoint || this.serverTokenRevokationEndpoint;
+        this.serverTokenRevocationEndpoint = globalConfig.serverTokenRevocationEndpoint || this.serverTokenRevocationEndpoint;
         this.refreshAccessTokens           = globalConfig.refreshAccessTokens || this.refreshAccessTokens;
       },
 
@@ -181,22 +180,22 @@ define("simple-auth-oauth2/authenticators/oauth2",
       restore: function(data) {
         var _this = this;
         return new Ember.RSVP.Promise(function(resolve, reject) {
-          if (!Ember.isEmpty(data.access_token)) {
-            var now = (new Date()).getTime();
-            if (!Ember.isEmpty(data.expires_at) && data.expires_at < now) {
-              if (_this.refreshAccessTokens) {
-                _this.refreshAccessToken(data.expires_in, data.refresh_token).then(function(data) {
-                  resolve(data);
-                }, reject);
-              } else {
-                reject();
-              }
+          var now = (new Date()).getTime();
+          if (!Ember.isEmpty(data.expires_at) && data.expires_at < now) {
+            if (_this.refreshAccessTokens) {
+              _this.refreshAccessToken(data.expires_in, data.refresh_token).then(function(data) {
+                resolve(data);
+              }, reject);
+            } else {
+              reject();
+            }
+          } else {
+            if (Ember.isEmpty(data.access_token)) {
+              reject();
             } else {
               _this.scheduleAccessTokenRefresh(data.expires_in, data.expires_at, data.refresh_token);
               resolve(data);
             }
-          } else {
-            reject();
           }
         });
       },
@@ -228,7 +227,10 @@ define("simple-auth-oauth2/authenticators/oauth2",
             Ember.run(function() {
               var expiresAt = _this.absolutizeExpirationTime(response.expires_in);
               _this.scheduleAccessTokenRefresh(response.expires_in, expiresAt, response.refresh_token);
-              resolve(Ember.$.extend(response, { expires_at: expiresAt }));
+              if (!Ember.isEmpty(expiresAt)) {
+                response = Ember.merge(response, { expires_at: expiresAt });
+              }
+              resolve(response);
             });
           }, function(xhr, status, error) {
             Ember.run(function() {
@@ -254,11 +256,11 @@ define("simple-auth-oauth2/authenticators/oauth2",
           resolve();
         }
         return new Ember.RSVP.Promise(function(resolve, reject) {
-          if (!Ember.isEmpty(_this.serverTokenRevokationEndpoint)) {
+          if (!Ember.isEmpty(_this.serverTokenRevocationEndpoint)) {
             var requests = [];
             Ember.A(['access_token', 'refresh_token']).forEach(function(tokenType) {
               if (!Ember.isEmpty(data[tokenType])) {
-                requests.push(_this.makeRequest(_this.serverTokenRevokationEndpoint, {
+                requests.push(_this.makeRequest(_this.serverTokenRevocationEndpoint, {
                   token_type_hint: tokenType, token: data[tokenType]
                 }));
               }
@@ -311,7 +313,7 @@ define("simple-auth-oauth2/authenticators/oauth2",
           if (Ember.isEmpty(expiresAt) && !Ember.isEmpty(expiresIn)) {
             expiresAt = new Date(now + expiresIn * 1000).getTime();
           }
-          var offset = (Math.floor(Math.random() * 15) + 5) * 1000;
+          var offset = (Math.floor(Math.random() * 5) + 5) * 1000;
           if (!Ember.isEmpty(refreshToken) && !Ember.isEmpty(expiresAt) && expiresAt > now - offset) {
             Ember.run.cancel(this._refreshTokenTimeout);
             delete this._refreshTokenTimeout;
@@ -335,7 +337,7 @@ define("simple-auth-oauth2/authenticators/oauth2",
               expiresIn     = response.expires_in || expiresIn;
               refreshToken  = response.refresh_token || refreshToken;
               var expiresAt = _this.absolutizeExpirationTime(expiresIn);
-              var data      = Ember.$.extend(response, { expires_in: expiresIn, expires_at: expiresAt, refresh_token: refreshToken });
+              var data      = Ember.merge(response, { expires_in: expiresIn, expires_at: expiresAt, refresh_token: refreshToken });
               _this.scheduleAccessTokenRefresh(expiresIn, null, refreshToken);
               _this.trigger('sessionDataUpdated', data);
               resolve(data);
@@ -353,7 +355,7 @@ define("simple-auth-oauth2/authenticators/oauth2",
       */
       absolutizeExpirationTime: function(expiresIn) {
         if (!Ember.isEmpty(expiresIn)) {
-          return new Date((new Date().getTime()) + (expiresIn - 5) * 1000).getTime();
+          return new Date((new Date().getTime()) + expiresIn * 1000).getTime();
         }
       }
     });
@@ -364,9 +366,6 @@ define("simple-auth-oauth2/authorizers/oauth2",
     "use strict";
     var Base = __dependency1__["default"];
     var isSecureUrl = __dependency2__["default"];
-
-    var global = (typeof window !== 'undefined') ? window : {},
-        Ember = global.Ember;
 
     /**
       Authorizer that conforms to OAuth 2
@@ -410,9 +409,6 @@ define("simple-auth-oauth2/ember",
   ["./initializer"],
   function(__dependency1__) {
     "use strict";
-    var global = (typeof window !== 'undefined') ? window : {},
-        Ember = global.Ember;
-
     var initializer = __dependency1__["default"];
 
     Ember.onLoad('Ember.Application', function(Application) {
@@ -423,9 +419,6 @@ define("simple-auth-oauth2/initializer",
   ["simple-auth-oauth2/authenticators/oauth2","simple-auth-oauth2/authorizers/oauth2","exports"],
   function(__dependency1__, __dependency2__, __exports__) {
     "use strict";
-    var global = (typeof window !== 'undefined') ? window : {},
-        Ember = global.Ember;
-
     var Authenticator = __dependency1__["default"];
     var Authorizer = __dependency2__["default"];
 
@@ -451,9 +444,9 @@ define('simple-auth/utils/get-global-config',  ['exports'], function(__exports__
   __exports__['default'] = global.SimpleAuth.Utils.getGlobalConfig;
 });
 
-var initializer   = requireModule('simple-auth-oauth2/initializer').default;
-var Authenticator = requireModule('simple-auth-oauth2/authenticators/oauth2').default;
-var Authorizer    = requireModule('simple-auth-oauth2/authorizers/oauth2').default;
+var initializer   = requireModule('simple-auth-oauth2/initializer')['default'];
+var Authenticator = requireModule('simple-auth-oauth2/authenticators/oauth2')['default'];
+var Authorizer    = requireModule('simple-auth-oauth2/authorizers/oauth2')['default'];
 
 global.SimpleAuth.Authenticators.OAuth2 = Authenticator;
 global.SimpleAuth.Authorizers.OAuth2    = Authorizer;

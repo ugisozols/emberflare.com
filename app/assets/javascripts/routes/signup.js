@@ -1,10 +1,4 @@
-EmberFlare.SignupRoute = Ember.Route.extend({
-  beforeModel: function() {
-    if (this.get("session.isAuthenticated")) {
-      this.transitionTo("entries");
-    }
-  },
-
+EmberFlare.SignupRoute = Ember.Route.extend(SimpleAuth.UnauthenticatedRouteMixin, {
   model: function() {
     return this.store.createRecord("user");
   },
