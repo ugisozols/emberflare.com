@@ -12,7 +12,7 @@
       </ul>
       <div class="pull-right">
         {{#if session.isAuthenticated}}
-          {{#view EmberFlare.SignedinView}}
+          {{#view "signedin"}}
             {{session.username}}&nbsp;&nbsp;&nbsp;{{gravatar-image emailHash=session.gravatar_email_hash}}
 
             {{#link-to "account" id="account" title="Account settings"}}
