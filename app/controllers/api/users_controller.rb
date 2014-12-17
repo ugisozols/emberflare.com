@@ -1,10 +1,8 @@
 class Api::UsersController < ApiController
-  respond_to :json
-
   def create
     user = User.create(user_params)
 
-    respond_with user, :location => "/signin"
+    render json: user, location: "/signin"
   end
 
   private
