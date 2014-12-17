@@ -1,6 +1,6 @@
 (function(global) {
 
-Ember.libraries.register('Ember Simple Auth OAuth 2.0', '0.6.6');
+Ember.libraries.register('Ember Simple Auth OAuth 2.0', '0.7.2');
 
 var define, requireModule;
 
@@ -57,12 +57,11 @@ var define, requireModule;
 })();
 
 define("simple-auth-oauth2/authenticators/oauth2", 
-  ["simple-auth/authenticators/base","simple-auth/utils/is-secure-url","simple-auth/utils/get-global-config","exports"],
-  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+  ["simple-auth/authenticators/base","./../configuration","exports"],
+  function(__dependency1__, __dependency2__, __exports__) {
     "use strict";
     var Base = __dependency1__["default"];
-    var isSecureUrl = __dependency2__["default"];
-    var getGlobalConfig = __dependency3__["default"];
+    var Configuration = __dependency2__["default"];
 
     /**
       Authenticator that conforms to OAuth 2
@@ -86,7 +85,7 @@ define("simple-auth-oauth2/authenticators/oauth2",
         Triggered when the authenticator refreshes the access token (see
         [RFC 6740, section 6](http://tools.ietf.org/html/rfc6749#section-6)).
 
-        @event updated
+        @event sessionDataUpdated
         @param {Object} data The updated session data
       */
 
@@ -94,14 +93,8 @@ define("simple-auth-oauth2/authenticators/oauth2",
         The endpoint on the server the authenticator acquires the access token
         from.
 
-        This value can be configured via the global environment object:
-
-        ```js
-        window.ENV = window.ENV || {};
-        window.ENV['simple-auth-oauth2'] = {
-          serverTokenEndpoint: '/some/custom/endpoint'
-        }
-        ```
+        This value can be configured via
+        [`SimpleAuth.Configuration.OAuth2#serverTokenEndpoint`](#SimpleAuth-Configuration-OAuth2-serverTokenEndpoint).
 
         @property serverTokenEndpoint
         @type String
@@ -113,14 +106,8 @@ define("simple-auth-oauth2/authenticators/oauth2",
         The endpoint on the server the authenticator uses to revoke tokens. Only
         set this if the server actually supports token revokation.
 
-        This value can be configured via the global environment object:
-
-        ```js
-        window.ENV = window.ENV || {};
-        window.ENV['simple-auth-oauth2'] = {
-          serverTokenRevocationEndpoint: '/some/custom/endpoint'
-        }
-        ```
+        This value can be configured via
+        [`SimpleAuth.Configuration.OAuth2#serverTokenRevocationEndpoint`](#SimpleAuth-Configuration-OAuth2-serverTokenRevocationEndpoint).
 
         @property serverTokenRevocationEndpoint
         @type String
@@ -131,14 +118,8 @@ define("simple-auth-oauth2/authenticators/oauth2",
       /**
         Sets whether the authenticator automatically refreshes access tokens.
 
-        This value can be configured via the global environment object:
-
-        ```js
-        window.ENV = window.ENV || {};
-        window.ENV['simple-auth-oauth2'] = {
-          refreshAccessTokens: false
-        }
-        ```
+        This value can be configured via
+        [`SimpleAuth.Configuration.OAuth2#refreshAccessTokens`](#SimpleAuth-Configuration-OAuth2-refreshAccessTokens).
 
         @property refreshAccessTokens
         @type Boolean
@@ -157,10 +138,9 @@ define("simple-auth-oauth2/authenticators/oauth2",
         @private
       */
       init: function() {
-        var globalConfig                   = getGlobalConfig('simple-auth-oauth2');
-        this.serverTokenEndpoint           = globalConfig.serverTokenEndpoint || this.serverTokenEndpoint;
-        this.serverTokenRevocationEndpoint = globalConfig.serverTokenRevocationEndpoint || this.serverTokenRevocationEndpoint;
-        this.refreshAccessTokens           = globalConfig.refreshAccessTokens || this.refreshAccessTokens;
+        this.serverTokenEndpoint           = Configuration.serverTokenEndpoint;
+        this.serverTokenRevocationEndpoint = Configuration.serverTokenRevocationEndpoint;
+        this.refreshAccessTokens           = Configuration.refreshAccessTokens;
       },
 
       /**
@@ -201,12 +181,14 @@ define("simple-auth-oauth2/authenticators/oauth2",
       },
 
       /**
-        Authenticates the session with the specified `credentials`; the credentials
-        are send via a _"POST"_ request to the
+        Authenticates the session with the specified `options`; makes a `POST`
+        request to the
         [`Authenticators.OAuth2#serverTokenEndpoint`](#SimpleAuth-Authenticators-OAuth2-serverTokenEndpoint)
-        and if they are valid the server returns an access token in response (see
-        http://tools.ietf.org/html/rfc6749#section-4.3). __If the credentials are
-        valid and authentication succeeds, a promise that resolves with the
+        with the passed credentials and optional scope and receives the token in
+        response (see http://tools.ietf.org/html/rfc6749#section-4.3).
+
+        __If the credentials are valid (and the optionally requested scope is
+        granted) and thus authentication succeeds, a promise that resolves with the
         server's response is returned__, otherwise a promise that rejects with the
         error is returned.
 
@@ -216,13 +198,20 @@ define("simple-auth-oauth2/authenticators/oauth2",
         [`Authenticators.OAuth2#refreshAccessTokens`](#SimpleAuth-Authenticators-OAuth2-refreshAccessTokens)).
 
         @method authenticate
-        @param {Object} credentials The credentials to authenticate the session with
+        @param {Object} options
+        @param {String} options.identification The resource owner username
+        @param {String} options.password The resource owner password
+        @param {String|Array} [options.scope] The scope of the access request (see [RFC 6749, section 3.3](http://tools.ietf.org/html/rfc6749#section-3.3))
         @return {Ember.RSVP.Promise} A promise that resolves when an access token is successfully acquired from the server and rejects otherwise
       */
-      authenticate: function(credentials) {
+      authenticate: function(options) {
         var _this = this;
         return new Ember.RSVP.Promise(function(resolve, reject) {
-          var data = { grant_type: 'password', username: credentials.identification, password: credentials.password };
+          var data = { grant_type: 'password', username: options.identification, password: options.password };
+          if (!Ember.isEmpty(options.scope)) {
+            var scopesString = Ember.makeArray(options.scope).join(' ');
+            Ember.merge(data, { scope: scopesString });
+          }
           _this.makeRequest(_this.serverTokenEndpoint, data).then(function(response) {
             Ember.run(function() {
               var expiresAt = _this.absolutizeExpirationTime(response.expires_in);
@@ -290,9 +279,6 @@ define("simple-auth-oauth2/authenticators/oauth2",
         @protected
       */
       makeRequest: function(url, data) {
-        if (!isSecureUrl(url)) {
-          Ember.Logger.warn('Credentials are transmitted via an insecure connection - use HTTPS to keep them secure.');
-        }
         return Ember.$.ajax({
           url:         url,
           type:        'POST',
@@ -361,11 +347,10 @@ define("simple-auth-oauth2/authenticators/oauth2",
     });
   });
 define("simple-auth-oauth2/authorizers/oauth2", 
-  ["simple-auth/authorizers/base","simple-auth/utils/is-secure-url","exports"],
-  function(__dependency1__, __dependency2__, __exports__) {
+  ["simple-auth/authorizers/base","exports"],
+  function(__dependency1__, __exports__) {
     "use strict";
     var Base = __dependency1__["default"];
-    var isSecureUrl = __dependency2__["default"];
 
     /**
       Authorizer that conforms to OAuth 2
@@ -378,7 +363,7 @@ define("simple-auth-oauth2/authorizers/oauth2",
 
       @class OAuth2
       @namespace SimpleAuth.Authorizers
-      @module simple-auth-devise/authorizers/oauth2
+      @module simple-auth-oauth2/authorizers/oauth2
       @extends Base
     */
     __exports__["default"] = Base.extend({
@@ -397,13 +382,81 @@ define("simple-auth-oauth2/authorizers/oauth2",
       authorize: function(jqXHR, requestOptions) {
         var accessToken = this.get('session.access_token');
         if (this.get('session.isAuthenticated') && !Ember.isEmpty(accessToken)) {
-          if (!isSecureUrl(requestOptions.url)) {
-            Ember.Logger.warn('Credentials are transmitted via an insecure connection - use HTTPS to keep them secure.');
-          }
           jqXHR.setRequestHeader('Authorization', 'Bearer ' + accessToken);
         }
       }
     });
+  });
+define("simple-auth-oauth2/configuration", 
+  ["simple-auth/utils/load-config","exports"],
+  function(__dependency1__, __exports__) {
+    "use strict";
+    var loadConfig = __dependency1__["default"];
+
+    var defaults = {
+      serverTokenEndpoint:           '/token',
+      serverTokenRevocationEndpoint: null,
+      refreshAccessTokens:           true
+    };
+
+    /**
+      Ember Simple Auth OAuth2's configuration object.
+
+      To change any of these values, set them on the application's environment
+      object:
+
+      ```js
+      ENV['simple-auth-oauth2'] = {
+        serverTokenEndpoint: '/some/custom/endpoint'
+      }
+      ```
+
+      @class OAuth2
+      @namespace SimpleAuth.Configuration
+      @module simple-auth/configuration
+    */
+    __exports__["default"] = {
+      /**
+        The endpoint on the server the authenticator acquires the access token
+        from.
+
+        @property serverTokenEndpoint
+        @readOnly
+        @static
+        @type String
+        @default '/token'
+      */
+      serverTokenEndpoint: defaults.serverTokenEndpoint,
+
+      /**
+        The endpoint on the server the authenticator uses to revoke tokens. Only
+        set this if the server actually supports token revokation.
+
+        @property serverTokenRevocationEndpoint
+        @readOnly
+        @static
+        @type String
+        @default null
+      */
+      serverTokenRevocationEndpoint: defaults.serverTokenRevocationEndpoint,
+
+      /**
+        Sets whether the authenticator automatically refreshes access tokens.
+
+        @property refreshAccessTokens
+        @readOnly
+        @static
+        @type Boolean
+        @default true
+      */
+      refreshAccessTokens: defaults.refreshAccessTokens,
+
+      /**
+        @method load
+        @private
+      */
+      load: loadConfig(defaults)
+    };
   });
 define("simple-auth-oauth2/ember", 
   ["./initializer"],
@@ -416,16 +469,20 @@ define("simple-auth-oauth2/ember",
     });
   });
 define("simple-auth-oauth2/initializer", 
-  ["simple-auth-oauth2/authenticators/oauth2","simple-auth-oauth2/authorizers/oauth2","exports"],
-  function(__dependency1__, __dependency2__, __exports__) {
+  ["./configuration","simple-auth/utils/get-global-config","simple-auth-oauth2/authenticators/oauth2","simple-auth-oauth2/authorizers/oauth2","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __exports__) {
     "use strict";
-    var Authenticator = __dependency1__["default"];
-    var Authorizer = __dependency2__["default"];
+    var Configuration = __dependency1__["default"];
+    var getGlobalConfig = __dependency2__["default"];
+    var Authenticator = __dependency3__["default"];
+    var Authorizer = __dependency4__["default"];
 
     __exports__["default"] = {
       name:       'simple-auth-oauth2',
       before:     'simple-auth',
       initialize: function(container, application) {
+        var config = getGlobalConfig('simple-auth-oauth2');
+        Configuration.load(container, config);
         container.register('simple-auth-authorizer:oauth2-bearer', Authorizer);
         container.register('simple-auth-authenticator:oauth2-password-grant', Authenticator);
       }
@@ -437,17 +494,19 @@ define('simple-auth/authenticators/base',  ['exports'], function(__exports__) {
 define('simple-auth/authorizers/base',  ['exports'], function(__exports__) {
   __exports__['default'] = global.SimpleAuth.Authorizers.Base;
 });
-define('simple-auth/utils/is-secure-url',  ['exports'], function(__exports__) {
-  __exports__['default'] = global.SimpleAuth.Utils.isSecureUrl;
-});
 define('simple-auth/utils/get-global-config',  ['exports'], function(__exports__) {
   __exports__['default'] = global.SimpleAuth.Utils.getGlobalConfig;
 });
+define('simple-auth/utils/load-config',  ['exports'], function(__exports__) {
+  __exports__['default'] = global.SimpleAuth.Utils.loadConfig;
+});
 
 var initializer   = requireModule('simple-auth-oauth2/initializer')['default'];
+var Configuration = requireModule('simple-auth-oauth2/configuration')['default'];
 var Authenticator = requireModule('simple-auth-oauth2/authenticators/oauth2')['default'];
 var Authorizer    = requireModule('simple-auth-oauth2/authorizers/oauth2')['default'];
 
+global.SimpleAuth.Configuration.OAuth2  = Configuration;
 global.SimpleAuth.Authenticators.OAuth2 = Authenticator;
 global.SimpleAuth.Authorizers.OAuth2    = Authorizer;
 

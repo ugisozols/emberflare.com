@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.0.beta1'
+gem 'rails', '4.2.0.rc3'
 gem 'responders', '~> 2.0.0'
 gem 'bcrypt', '~> 3.1.2'
 gem 'sqlite3'
@@ -16,6 +16,7 @@ gem "font-awesome-rails", "~> 4.0.3"
 gem 'jquery-rails'
 
 gem 'ember-rails'
+gem 'active_model_serializers', github: 'rails-api/active_model_serializers', branch: '0-8-stable'
 
 gem "thin"
 
