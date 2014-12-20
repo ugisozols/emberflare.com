@@ -1,8 +1,12 @@
 class Api::UsersController < ApiController
   def create
-    user = User.create(user_params)
+    user = User.new(user_params)
 
-    render json: user, location: "/signin"
+    if user.save
+      render json: user, location: "/signin"
+    else
+      head 400
+    end
   end
 
   private

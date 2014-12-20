@@ -8,9 +8,13 @@ class Api::EntriesController < ApiController
   end
 
   def create
-    entry = Entry.create(entry_params)
+    entry = Entry.new(entry_params)
 
-    render json: entry, location: api_entries_path
+    if entry.save
+      render json: entry, location: api_entries_path
+    else
+      head 400
+    end
   end
 
   private
