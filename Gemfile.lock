@@ -81,7 +81,7 @@ GEM
     ember-source (1.9.0)
       handlebars-source (~> 2.0)
     erubis (2.7.0)
-    eventmachine (1.0.3)
+    eventmachine (1.0.4)
     execjs (2.2.2)
     factory_girl (4.4.0)
       activesupport (>= 3.0.0)
