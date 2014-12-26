@@ -123,7 +123,8 @@ GEM
       cliver (~> 0.3.1)
       multi_json (~> 1.0)
       websocket-driver (>= 0.2.0)
-    prerender_rails (1.0.1)
+    prerender_rails (1.1.1)
+      activesupport
       rack
     pry (0.10.0)
       coderay (~> 1.1.0)
