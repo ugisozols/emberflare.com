@@ -1,5 +1,5 @@
-// Fetched from channel: tags/v1.0.0-beta.14, with url http://builds.emberjs.com/tags/v1.0.0-beta.14/ember-data.js
-// Fetched on: 2014-12-26T06:46:25Z
+// Fetched from channel: tags/v1.0.0-beta.14.1, with url http://builds.emberjs.com/tags/v1.0.0-beta.14.1/ember-data.js
+// Fetched on: 2014-12-31T20:45:55Z
 (function() {
     "use strict";
     /**
@@ -4372,12 +4372,12 @@
     /**
       @property VERSION
       @type String
-      @default '<%= versionStamp %>'
+      @default '1.0.0-beta.14.1'
       @static
     */
     /*jshint -W079 */
     var ember$data$lib$core$$DS = Ember.Namespace.create({
-      VERSION: '<%= versionStamp %>'
+      VERSION: '1.0.0-beta.14.1'
     });
 
     if (Ember.libraries) {
@@ -12118,13 +12118,20 @@
     });
     /**
       Ember Data
-
       @module ember-data
       @main ember-data
     */
 
     // support RSVP 2.x via resolve,  but prefer RSVP 3.x's Promise.cast
     Ember.RSVP.Promise.cast = Ember.RSVP.Promise.cast || Ember.RSVP.resolve;
+
+    Ember.runInDebug(function(){
+      if (Ember.VERSION.match(/1\.[0-7]\./)){
+        throw new Ember.Error("Ember Data requires at least Ember 1.8.0, but you have " +
+                              Ember.VERSION +
+                              ". Please upgrade your version of Ember, then upgrade Ember Data");
+      }
+    });
 
     ember$data$lib$core$$default.Store         = ember$data$lib$system$store$$Store;
     ember$data$lib$core$$default.PromiseArray  = ember$data$lib$system$promise_proxies$$PromiseArray;
