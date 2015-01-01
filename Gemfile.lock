@@ -105,7 +105,6 @@ GEM
       railties (>= 4.2.0.beta)
       thor (>= 0.14, < 2.0)
     json (1.8.1)
-    le (2.3.9)
     loofah (2.0.1)
       nokogiri (>= 1.5.9)
     mail (2.6.3)
@@ -227,7 +226,6 @@ DEPENDENCIES
   font-awesome-rails (~> 4.0.3)
   friendly_id (~> 5.0.3)
   jquery-rails
-  le
   poltergeist (~> 1.5.1)
   prerender_rails
   pry-rails
