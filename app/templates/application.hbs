@@ -1,3 +1,36 @@
+<nav class="navbar navbar-inverse navbar-static-top">
+  <div class="container">
+    {{link-to "EmberFlare" "entries" class="brand"}}
+    <ul class="nav">
+      <li>{{link-to "Entries" "entries"}}</li>
+      <li>{{link-to "Submit" "entries.new"}}</li>
+      <li>{{link-to "About" "about"}}</li>
+      <li>
+        <a href="https://twitter.com/emberflare_com" target="blank">@emberflare_com</a>
+      </li>
+    </ul>
+    <div class="pull-right">
+      {{#if session.isAuthenticated}}
+        {{#view "signedin"}}
+          {{session.username}}&nbsp;&nbsp;&nbsp;{{gravatar-image emailHash=session.gravatar_email_hash}}
+
+          {{#link-to "account" id="account" title="Account settings"}}
+            <i class="fa fa-cog"></i>
+          {{/link-to}}
+
+          <a {{ action 'invalidateSession' }} href="" id="signout" title="Sign out">
+            <i class="fa fa-sign-out"></i>
+          </a>
+        {{/view}}
+      {{else}}
+        <div class="user-signin">
+          {{link-to "Sign in" "signin"}} | {{link-to "Sign up" "signup"}}
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</nav>
+
 <div class="container">
   {{outlet}}
 </div>

@@ -1,5 +1,45 @@
 @import 'bower_components/bootstrap-sass-official/assets/stylesheets/_bootstrap';
 
-html, body {
-  margin: 20px;
+body {
+  background-color: #E5E9EC;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.navbar {
+  margin-bottom: 20px;
+
+  .container {
+    min-height: 80px;
+    background: #22262E;
+    color: #fff;
+    font-size: 16px;
+
+    a {
+      color: #fff;
+
+      &:hover {
+        color: #0AA699;
+      }
+    }
+
+    .brand {
+      font-weight: bold;
+      color: #0AA699;
+      padding: 10px 20px 10px 0;
+    }
+
+    #signout, #account {
+      margin-left: 12px;
+    }
+
+    .nav > li > a {
+      text-shadow: none;
+      // font-size: 15px;
+      color: #fff;
+
+      &:hover {
+        color: #0AA699;
+      }
+    }
+  }
 }
