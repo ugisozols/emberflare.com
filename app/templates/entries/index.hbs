@@ -1,0 +1,20 @@
+{{#each entry in model}}
+  <div class="row entry">
+    <div class="span2">
+      {{gravatar-image emailHash=entry.authorGravatarEmailHash size="90"}}
+      <div class="author">{{entry.authorName}}</div>
+    </div>
+
+    <div class="span10">
+      <div>
+        {{link-to entry.title "entries.show" entry class="title"}}
+      </div>
+      <div class="posted-at">
+        {{unbound fa-icon "clock-o"}} {{moment entry.createdAt "MMM Do, YYYY"}}
+      </div>
+      <hr>
+
+      <div class="body">{{showdown-addon entry.body}}</div>
+    </div>
+  </div>
+{{/each}}

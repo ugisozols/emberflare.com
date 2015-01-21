@@ -15,6 +15,9 @@ Router.map(function() {
     this.route("show", { path: "/:entry_id" });
     this.route("new");
   });
+
+  this.route("error404");
+  this.route("missing", { path: "/*path" });
 });
 
 export default Router;

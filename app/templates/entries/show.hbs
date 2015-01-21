@@ -1,0 +1,21 @@
+<div class="row entry">
+  <div class="span2">
+    {{gravatar-image emailHash=authorGravatarEmailHash size="90"}}
+    <div class="author">{{authorName}}</div>
+  </div>
+
+  <div class="span10">
+    <div class="title">{{title}}</div>
+    <div class="posted-at">
+      {{unbound fa-icon "clock-o"}} {{moment createdAt "MMM Do, YYYY"}}
+    </div>
+    <hr>
+
+    <div class="body">{{showdown-addon body}}</div>
+    {{twitter-share-button title=title}}
+  </div>
+</div>
+
+<div class="row entry">
+  {{entry-comments entry="model"}}
+</div>
